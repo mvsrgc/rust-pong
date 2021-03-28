@@ -10,7 +10,19 @@ mod utils;
 
 impl EventHandler for State {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        utils::print_fps("update", ctx);
+        let mut frame_time = timer::delta(ctx).as_secs_f64();
+
+        while frame_time > 0.0 {
+            let cmp = frame_time.partial_cmp(&self.dt).expect("float NaN error");
+            let delta_time: f64 = if let std::cmp::Ordering::Less = cmp {
+                frame_time
+            } else {
+                self.dt
+            };
+            self.simulate(delta_time);
+            frame_time -= delta_time;
+        }
+
         Ok(())
     }
 
@@ -39,7 +51,7 @@ impl EventHandler for State {
             (Point2::new(0.0, 40.0), graphics::BLACK),
         )?;
 
-        let rect = graphics::Rect::new(self.mouse_x, self.mouse_y, 50.0, 50.0);
+        let rect = graphics::Rect::new(self.rect_x, self.rect_y, 50.0, 50.0);
         let rect_mesh =
             graphics::Mesh::new_rectangle(ctx, graphics::DrawMode::fill(), rect, graphics::BLACK)?;
 
@@ -65,11 +77,24 @@ struct State {
     clicks: usize,
     mouse_x: f32,
     mouse_y: f32,
+    rect_x: f32,
+    rect_y: f32,
+    velocity_x: f32,
+    dt: f64,
+}
+
+impl State {
+    pub fn simulate(&mut self, time: f64) {
+        let distance = self.velocity_x as f64 * time;
+        self.rect_x = self.rect_x % 1920.0 + distance as f32;
+        println!("[update] distance {}", distance);
+    }
 }
 
 fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("name", "author")
-        .window_setup(conf::WindowSetup::default().vsync(false));
+        .window_setup(conf::WindowSetup::default().vsync(false))
+        .window_mode(conf::WindowMode::default().dimensions(1920.0, 1080.0));
 
     let (ctx, event_loop) = &mut cb.build()?;
 
@@ -77,6 +102,10 @@ fn main() -> GameResult {
         clicks: 0,
         mouse_x: 0.0,
         mouse_y: 0.0,
+        rect_x: (1920 / 2) as f32,
+        rect_y: (1080 / 2) as f32,
+        velocity_x: 60.0,
+        dt: 1.0f64 / 60.0f64,
     };
 
     event::run(ctx, event_loop, state)
