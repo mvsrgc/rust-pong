@@ -69,7 +69,7 @@ struct State {
 
 fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("name", "author")
-        .window_setup(conf::WindowSetup::default().vsync(true));
+        .window_setup(conf::WindowSetup::default().vsync(false));
 
     let (ctx, event_loop) = &mut cb.build()?;
 

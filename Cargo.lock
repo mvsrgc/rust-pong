@@ -655,13 +655,6 @@ dependencies = [
 
 [[package]]
 name = "ggez"
-version = "0.1.0"
-dependencies = [
- "ggez 0.5.1",
-]
-
-[[package]]
-name = "ggez"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2a76347431050a0b4e1a925124cdcde614b628260093bb52560d9c6b48435336"
@@ -689,6 +682,13 @@ dependencies = [
  "toml",
  "winit",
  "zip",
+]
+
+[[package]]
+name = "ggezgame"
+version = "0.1.0"
+dependencies = [
+ "ggez",
 ]
 
 [[package]]
