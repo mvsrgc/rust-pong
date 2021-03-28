@@ -1,4 +1,5 @@
 use ggez::input::mouse::MouseButton;
+use std::time::Duration;
 
 use ggez::event::{self, EventHandler};
 use ggez::graphics::{self, Color, DrawParam};
@@ -11,7 +12,6 @@ mod utils;
 impl EventHandler for State {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         let mut frame_time = timer::delta(ctx).as_secs_f64();
-
         while frame_time > 0.0 {
             let cmp = frame_time.partial_cmp(&self.dt).expect("float NaN error");
             let delta_time: f64 = if let std::cmp::Ordering::Less = cmp {
@@ -104,7 +104,7 @@ fn main() -> GameResult {
         mouse_y: 0.0,
         rect_x: (1920 / 2) as f32,
         rect_y: (1080 / 2) as f32,
-        velocity_x: 60.0,
+        velocity_x: 240.0,
         dt: 1.0f64 / 60.0f64,
     };
 
