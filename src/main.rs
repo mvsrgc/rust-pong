@@ -5,8 +5,8 @@ mod pong;
 
 use crate::pong::{Paddle, Pong};
 
-const GAME_WIDTH: f32 = 1920.0;
-const GAME_HEIGHT: f32 = 1080.0;
+const GAME_WIDTH: f32 = 800.0;
+const GAME_HEIGHT: f32 = 600.0;
 
 fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("name", "author")
@@ -19,7 +19,6 @@ fn main() -> GameResult {
         clicks: 0,
         mouse_x: 0.0,
         mouse_y: 0.0,
-        velocity_x: 240.0,
         dt: 1.0f64 / 60.0f64,
         debug_mode: false,
         left_paddle: Paddle::new(GAME_WIDTH, GAME_HEIGHT, true),

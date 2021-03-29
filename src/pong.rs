@@ -9,14 +9,13 @@ use ggez::timer;
 use ggez::*;
 use ggez::{Context, GameResult};
 
-const PADDLE_WIDTH: f32 = 32.0;
-const PADDLE_HEIGHT: f32 = 128.0;
+const PADDLE_WIDTH: f32 = 12.0;
+const PADDLE_HEIGHT: f32 = 96.0;
 
 pub struct Pong {
     pub clicks: usize,
     pub mouse_x: f32,
     pub mouse_y: f32,
-    pub velocity_x: f32,
     pub dt: f64,
     pub debug_mode: bool,
     pub left_paddle: Paddle,
@@ -50,11 +49,17 @@ impl Paddle {
 
 impl Pong {
     pub fn simulate(&mut self, time: f64) {
-        let distance = self.left_paddle.speed as f64 * time;
-        self.left_paddle.y = self.left_paddle.y - (distance as f32 * self.left_paddle.direction);
+        if self.left_paddle.direction != 0.0 {
+            let distance = self.left_paddle.speed as f64 * time;
+            self.left_paddle.y =
+                self.left_paddle.y - (distance as f32 * self.left_paddle.direction);
+        }
 
-        let distance = self.right_paddle.speed as f64 * time;
-        self.right_paddle.y = self.right_paddle.y - (distance as f32 * self.right_paddle.direction)
+        if self.right_paddle.direction != 0.0 {
+            let distance = self.right_paddle.speed as f64 * time;
+            self.right_paddle.y =
+                self.right_paddle.y - (distance as f32 * self.right_paddle.direction)
+        }
     }
 }
 
