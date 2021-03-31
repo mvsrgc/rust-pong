@@ -13,11 +13,26 @@ const PADDLE_WIDTH: f32 = 12.0;
 const PADDLE_HEIGHT: f32 = 96.0;
 const PADDLE_SPEED: f32 = 350.0;
 
+const DIRECTION_UP: f32 = 1.0;
+const DIRECTION_DOWN: f32 = -1.0;
+
 const DEFAULT_TIME_SCALE: f64 = 1.0;
 
 pub enum Side {
     Left,
     Right,
+}
+
+pub enum Direction {
+    Up,
+    Down,
+}
+
+fn direction(direction: Direction) -> f32 {
+    match direction {
+        Direction::Up => 1.0,
+        Direction::Down => -1.0,
+    }
 }
 
 pub struct Pong {
@@ -80,12 +95,32 @@ impl Pong {
             let distance = self.left_paddle.speed as f64 * time;
             self.left_paddle.y =
                 self.left_paddle.y - (distance as f32 * self.left_paddle.direction);
+
+            if self.left_paddle.direction == DIRECTION_UP && self.left_paddle.y < 0.0 {
+                self.left_paddle.y = 0.0;
+            }
+
+            if self.left_paddle.direction == DIRECTION_DOWN
+                && self.left_paddle.y + self.left_paddle.h > self.game_height
+            {
+                self.left_paddle.y = self.game_height - self.left_paddle.h;
+            }
         }
 
         if self.right_paddle.direction != 0.0 {
             let distance = self.right_paddle.speed as f64 * time;
             self.right_paddle.y =
-                self.right_paddle.y - (distance as f32 * self.right_paddle.direction)
+                self.right_paddle.y - (distance as f32 * self.right_paddle.direction);
+
+            if self.right_paddle.direction == DIRECTION_UP && self.right_paddle.y < 0.0 {
+                self.right_paddle.y = 0.0;
+            }
+
+            if self.right_paddle.direction == DIRECTION_DOWN
+                && self.right_paddle.y + self.right_paddle.h > self.game_height
+            {
+                self.right_paddle.y = self.game_height - self.right_paddle.h;
+            }
         }
     }
 }
@@ -213,13 +248,14 @@ impl EventHandler for Pong {
         match keycode {
             KeyCode::F1 => self.debug_mode = !self.debug_mode,
             KeyCode::Escape => event::quit(ctx),
-            KeyCode::W => self.left_paddle.direction = 1.0,
-            KeyCode::S => self.left_paddle.direction = -1.0,
-            KeyCode::Up => self.right_paddle.direction = 1.0,
-            KeyCode::Down => self.right_paddle.direction = -1.0,
+            KeyCode::W => self.left_paddle.direction = DIRECTION_UP,
+            KeyCode::S => self.left_paddle.direction = DIRECTION_DOWN,
+            KeyCode::Up => self.right_paddle.direction = DIRECTION_UP,
+            KeyCode::Down => self.right_paddle.direction = DIRECTION_DOWN,
             KeyCode::PageUp => self.time_scale *= 1.5,
             KeyCode::PageDown => self.time_scale /= 1.5,
             KeyCode::Home => self.time_scale = DEFAULT_TIME_SCALE,
+            KeyCode::End => self.time_scale = 0.0,
             default => (),
         }
     }
