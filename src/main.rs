@@ -1,9 +1,10 @@
 use ggez::event::{self};
 use ggez::{conf, GameResult};
 
-mod pong;
+pub mod paddle;
+pub mod pong;
 
-use crate::pong::Pong;
+use crate::pong::GameState;
 
 const GAME_WIDTH: f32 = 1920.0;
 const GAME_HEIGHT: f32 = 1080.0;
@@ -15,7 +16,7 @@ fn main() -> GameResult {
 
     let (ctx, event_loop) = &mut cb.build()?;
 
-    let pong = &mut Pong::new(GAME_WIDTH, GAME_HEIGHT);
+    let game_state = &mut GameState::new(GAME_WIDTH, GAME_HEIGHT);
 
-    event::run(ctx, event_loop, pong)
+    event::run(ctx, event_loop, game_state)
 }

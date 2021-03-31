@@ -9,14 +9,12 @@ use ggez::timer;
 use ggez::*;
 use ggez::{Context, GameResult};
 
-const PADDLE_WIDTH: f32 = 12.0;
-const PADDLE_HEIGHT: f32 = 96.0;
-const PADDLE_SPEED: f32 = 350.0;
+use crate::paddle::Paddle;
+
+const DEFAULT_TIME_SCALE: f64 = 1.0;
 
 const DIRECTION_UP: f32 = 1.0;
 const DIRECTION_DOWN: f32 = -1.0;
-
-const DEFAULT_TIME_SCALE: f64 = 1.0;
 
 pub enum Side {
     Left,
@@ -28,14 +26,7 @@ pub enum Direction {
     Down,
 }
 
-fn direction(direction: Direction) -> f32 {
-    match direction {
-        Direction::Up => 1.0,
-        Direction::Down => -1.0,
-    }
-}
-
-pub struct Pong {
+pub struct GameState {
     pub clicks: usize,
     pub mouse_x: f32,
     pub mouse_y: f32,
@@ -48,35 +39,10 @@ pub struct Pong {
     pub game_height: f32,
 }
 
-pub struct Paddle {
-    pub x: f32,
-    pub y: f32,
-    pub w: f32,
-    pub h: f32,
-    pub speed: f32,
-    pub direction: f32,
-}
-
-impl Paddle {
-    pub fn new(game_width: f32, game_height: f32, side: Side) -> Paddle {
-        Paddle {
-            x: match side {
-                Side::Left => 0.0,
-                Side::Right => game_width - PADDLE_WIDTH,
-            },
-            y: ((game_height - PADDLE_HEIGHT) / 2.0),
-            w: PADDLE_WIDTH,
-            h: PADDLE_HEIGHT,
-            speed: PADDLE_SPEED,
-            direction: 0.0,
-        }
-    }
-}
-
-impl Pong {
-    pub fn new(game_width: f32, game_height: f32) -> Pong {
+impl GameState {
+    pub fn new(game_width: f32, game_height: f32) -> GameState {
         let time_scale: f64 = DEFAULT_TIME_SCALE;
-        Pong {
+        GameState {
             clicks: 0,
             mouse_x: 0.0,
             mouse_y: 0.0,
@@ -159,7 +125,7 @@ fn build_net_line(
     mb.build(ctx)
 }
 
-impl EventHandler for Pong {
+impl EventHandler for GameState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         let mut frame_time = timer::delta(ctx).as_secs_f64();
         while frame_time > 0.0 {
@@ -205,16 +171,16 @@ impl EventHandler for Pong {
             ctx,
             self.left_paddle.x as i32,
             self.left_paddle.y as i32,
-            PADDLE_WIDTH as i32,
-            PADDLE_HEIGHT as i32,
+            self.left_paddle.w as i32,
+            self.left_paddle.h as i32,
         )?;
 
         let right_rectangle = build_rectangle(
             ctx,
             self.right_paddle.x as i32,
             self.right_paddle.y as i32,
-            PADDLE_WIDTH as i32,
-            PADDLE_HEIGHT as i32,
+            self.right_paddle.w as i32,
+            self.right_paddle.h as i32,
         )?;
 
         let middle_line = build_net_line(ctx, self.game_width as i32, self.game_height as i32)?;
