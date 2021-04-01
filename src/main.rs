@@ -4,6 +4,7 @@ use ggez::{conf, GameResult};
 pub mod paddle;
 pub mod player_control;
 pub mod pong;
+pub mod render;
 
 use crate::pong::GameState;
 
