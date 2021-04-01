@@ -2,6 +2,7 @@ use ggez::event::{self};
 use ggez::{conf, GameResult};
 
 pub mod paddle;
+pub mod player_control;
 pub mod pong;
 
 use crate::pong::GameState;
