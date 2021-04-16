@@ -10,14 +10,14 @@ use crate::pong::{DEFAULT_TIME_SCALE, DIRECTION_DOWN, DIRECTION_UP};
 impl GameState {
     pub fn mouse_button_up_event(
         &mut self,
-        ctx: &mut Context,
+        _ctx: &mut Context,
         button: MouseButton,
-        x: f32,
-        y: f32,
+        _x: f32,
+        _y: f32,
     ) {
         match button {
             MouseButton::Left => self.clicks += 1,
-            default => (),
+            _default => (),
         }
     }
 
@@ -30,8 +30,8 @@ impl GameState {
         &mut self,
         ctx: &mut Context,
         keycode: KeyCode,
-        keymod: KeyMods,
-        repeat: bool,
+        _keymod: KeyMods,
+        _repeat: bool,
     ) {
         match keycode {
             KeyCode::F1 => self.debug_mode = !self.debug_mode,
@@ -44,7 +44,7 @@ impl GameState {
             KeyCode::PageDown => self.time_scale /= 1.5,
             KeyCode::Home => self.time_scale = DEFAULT_TIME_SCALE,
             KeyCode::End => self.time_scale = 0.0,
-            default => (),
+            _default => (),
         }
     }
 }

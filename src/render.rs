@@ -1,22 +1,19 @@
 use ggez::graphics::DrawMode;
-use ggez::input::keyboard::{KeyCode, KeyMods};
-use ggez::input::mouse::MouseButton;
+use glam::*;
 
-use ggez::event::EventHandler;
 use ggez::graphics::{self, DrawParam};
 use ggez::nalgebra::Point2;
 use ggez::timer;
-use ggez::*;
 use ggez::{Context, GameResult};
 
 use crate::pong::GameState;
 
 fn build_rectangle(
     ctx: &mut Context,
-    x: i32,
-    y: i32,
-    w: i32,
-    h: i32,
+    x: f32,
+    y: f32,
+    w: f32,
+    h: f32,
 ) -> GameResult<graphics::Mesh> {
     let mb = &mut graphics::MeshBuilder::new();
 
@@ -27,22 +24,20 @@ fn build_rectangle(
     mb.build(ctx)
 }
 
-fn build_net_line(
-    ctx: &mut Context,
-    game_width: i32,
-    game_height: i32,
-) -> GameResult<graphics::Mesh> {
+fn build_circle(ctx: &mut Context, x: f32, y: f32, r: f32) -> GameResult<graphics::Mesh> {
     let mb = &mut graphics::MeshBuilder::new();
 
-    let rect = graphics::Rect::new(
-        ((game_width as f32 - (5.0 / 2.0)) / 2.0) as f32,
-        0.0,
-        5.0,
-        game_height as f32,
-    );
-    mb.rectangle(DrawMode::fill(), rect, graphics::WHITE);
+    mb.circle(DrawMode::fill(), Vec2::new(x, y), r, 0.01, graphics::WHITE);
 
     mb.build(ctx)
+}
+
+fn build_net_line(
+    ctx: &mut Context,
+    game_width: f32,
+    game_height: f32,
+) -> GameResult<graphics::Mesh> {
+    build_rectangle(ctx, game_width / 2.0 - (5.0 / 2.0), 0.0, 5.0, game_height)
 }
 
 impl GameState {
@@ -70,25 +65,30 @@ impl GameState {
 
         let left_rectangle = build_rectangle(
             ctx,
-            self.left_paddle.x as i32,
-            self.left_paddle.y as i32,
-            self.left_paddle.w as i32,
-            self.left_paddle.h as i32,
+            self.left_paddle.x,
+            self.left_paddle.y,
+            self.left_paddle.w,
+            self.left_paddle.h,
         )?;
 
         let right_rectangle = build_rectangle(
             ctx,
-            self.right_paddle.x as i32,
-            self.right_paddle.y as i32,
-            self.right_paddle.w as i32,
-            self.right_paddle.h as i32,
+            self.right_paddle.x,
+            self.right_paddle.y,
+            self.right_paddle.w,
+            self.right_paddle.h,
         )?;
 
-        let middle_line = build_net_line(ctx, self.game_width as i32, self.game_height as i32)?;
+        let net_line = build_net_line(ctx, self.game_width, self.game_height)?;
+
+        // @Cleanup Maybe have a vec that holds all the items in the game and then loop
+        // on that vec and call draw() on everything ?
+        let ball = build_circle(ctx, self.game_width / 2.0, self.game_height / 2.0, 15.0)?;
 
         graphics::draw(ctx, &left_rectangle, DrawParam::default())?;
         graphics::draw(ctx, &right_rectangle, DrawParam::default())?;
-        graphics::draw(ctx, &middle_line, DrawParam::default())?;
+        graphics::draw(ctx, &net_line, DrawParam::default())?;
+        graphics::draw(ctx, &ball, DrawParam::default())?;
 
         graphics::present(ctx)
     }

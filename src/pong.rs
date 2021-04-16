@@ -1,12 +1,8 @@
-use ggez::graphics::DrawMode;
 use ggez::input::keyboard::{KeyCode, KeyMods};
 use ggez::input::mouse::MouseButton;
 
 use ggez::event::EventHandler;
-use ggez::graphics::{self, DrawParam};
-use ggez::nalgebra::Point2;
 use ggez::timer;
-use ggez::*;
 use ggez::{Context, GameResult};
 
 use crate::paddle::Paddle;
@@ -47,7 +43,7 @@ impl GameState {
             mouse_x: 0.0,
             mouse_y: 0.0,
             time_scale,
-            dt: (1.0f64 / 60.0f64) * time_scale,
+            dt: (1.0 / 60.0) * time_scale,
             debug_mode: false,
             game_width,
             game_height,
@@ -97,7 +93,7 @@ impl EventHandler for GameState {
         while frame_time > 0.0 {
             let cmp = frame_time.partial_cmp(&self.dt).expect("float NaN error");
 
-            let mut delta_time: f64 = if let std::cmp::Ordering::Less = cmp {
+            let delta_time: f64 = if let std::cmp::Ordering::Less = cmp {
                 frame_time
             } else {
                 self.dt

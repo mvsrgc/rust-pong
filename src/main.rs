@@ -1,4 +1,4 @@
-use ggez::event::{self};
+use ggez::event;
 use ggez::{conf, GameResult};
 
 pub mod paddle;
