@@ -1,5 +1,4 @@
 use ggez::graphics::DrawMode;
-use glam::*;
 
 use ggez::graphics::{self, DrawParam};
 use ggez::nalgebra::Point2;
@@ -27,7 +26,13 @@ fn build_rectangle(
 fn build_circle(ctx: &mut Context, x: f32, y: f32, r: f32) -> GameResult<graphics::Mesh> {
     let mb = &mut graphics::MeshBuilder::new();
 
-    mb.circle(DrawMode::fill(), Vec2::new(x, y), r, 0.01, graphics::WHITE);
+    mb.circle(
+        DrawMode::fill(),
+        Point2::new(x, y),
+        r,
+        0.01,
+        graphics::WHITE,
+    );
 
     mb.build(ctx)
 }

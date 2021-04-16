@@ -11,4 +11,3 @@ opt-level = 2
 
 [dependencies]
 ggez = "0.5.1"
-glam = {version = "0.14.0", features = ["mint"]}
