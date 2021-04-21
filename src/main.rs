@@ -1,6 +1,7 @@
 use ggez::event;
 use ggez::{conf, GameResult};
 
+pub mod ball;
 pub mod paddle;
 pub mod player_control;
 pub mod pong;
@@ -13,7 +14,7 @@ const GAME_HEIGHT: f32 = 1080.0;
 
 fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("name", "author")
-        .window_setup(conf::WindowSetup::default().vsync(false))
+        .window_setup(conf::WindowSetup::default().vsync(true))
         .window_mode(conf::WindowMode::default().dimensions(GAME_WIDTH as f32, GAME_HEIGHT as f32));
 
     let (ctx, event_loop) = &mut cb.build()?;

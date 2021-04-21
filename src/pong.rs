@@ -5,7 +5,7 @@ use ggez::event::EventHandler;
 use ggez::timer;
 use ggez::{Context, GameResult};
 
-use crate::paddle::Paddle;
+use crate::{ball::Ball, paddle::Paddle};
 
 pub const DEFAULT_TIME_SCALE: f64 = 1.0;
 
@@ -31,6 +31,7 @@ pub struct GameState {
     pub debug_mode: bool,
     pub left_paddle: Paddle,
     pub right_paddle: Paddle,
+    pub ball: Ball,
     pub game_width: f32,
     pub game_height: f32,
 }
@@ -49,6 +50,7 @@ impl GameState {
             game_height,
             left_paddle: Paddle::new(game_width, game_height, Side::Left),
             right_paddle: Paddle::new(game_width, game_height, Side::Right),
+            ball: Ball::new(game_width, game_height),
         }
     }
 
@@ -84,6 +86,9 @@ impl GameState {
                 self.right_paddle.y = self.game_height - self.right_paddle.h;
             }
         }
+
+        self.ball.x = (self.ball.x as f64 + (self.ball.dx as f64 * time)) as f32;
+        self.ball.y = (self.ball.y as f64 + (self.ball.dy as f64 * time)) as f32;
     }
 }
 
