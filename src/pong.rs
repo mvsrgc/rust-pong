@@ -89,6 +89,8 @@ impl GameState {
 
         self.ball.x = (self.ball.x as f64 + (self.ball.dx as f64 * time)) as f32;
         self.ball.y = (self.ball.y as f64 + (self.ball.dy as f64 * time)) as f32;
+
+        // Test
     }
 }
 
