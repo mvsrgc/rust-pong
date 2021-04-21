@@ -42,7 +42,7 @@ fn build_net_line(
     game_width: f32,
     game_height: f32,
 ) -> GameResult<graphics::Mesh> {
-    build_rectangle(ctx, game_width / 2.0 - (5.0 / 2.0), 0.0, 5.0, game_height)
+    build_rectangle(ctx, game_width / 2.0 - (1.0 / 2.0), 0.0, 1.0, game_height)
 }
 
 impl GameState {
@@ -88,7 +88,7 @@ impl GameState {
 
         // @Cleanup Maybe have a vec that holds all the items in the game and then loop
         // on that vec and call draw() on everything ?
-        let ball = build_circle(ctx, self.game_width / 2.0, self.game_height / 2.0, 15.0)?;
+        let ball = build_circle(ctx, self.ball.x, self.ball.y, self.ball.radius)?;
 
         graphics::draw(ctx, &left_rectangle, DrawParam::default())?;
         graphics::draw(ctx, &right_rectangle, DrawParam::default())?;
