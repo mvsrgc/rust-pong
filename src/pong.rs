@@ -83,22 +83,12 @@ impl GameState {
                 self.left_paddle.rect.y - (distance as f32 * self.left_paddle.direction);
 
             // Left paddle with top wall
-            if self.left_paddle.rect.y <= 0.0
-                || Self::check_collision(
-                    self.left_paddle.rect,
-                    Rect::new(0.0, 0.0, self.game_width, 0.0),
-                )
-            {
+            if self.left_paddle.rect.y <= 0.0 {
                 self.left_paddle.rect.y = 0.0
             }
 
             // Left paddle with bottom wall
-            if self.left_paddle.rect.y + self.left_paddle.rect.h >= self.game_height
-                || Self::check_collision(
-                    self.left_paddle.rect,
-                    Rect::new(0.0, self.game_height, self.game_width, 0.0),
-                )
-            {
+            if self.left_paddle.rect.y + self.left_paddle.rect.h >= self.game_height {
                 self.left_paddle.rect.y = self.game_height - self.left_paddle.rect.h;
             }
         }
@@ -110,22 +100,12 @@ impl GameState {
                 self.right_paddle.rect.y - (distance as f32 * self.right_paddle.direction);
 
             // Right paddle with top wall
-            if self.right_paddle.rect.y <= 0.0
-                || Self::check_collision(
-                    self.right_paddle.rect,
-                    Rect::new(0.0, 0.0, self.game_width, 0.0),
-                )
-            {
+            if self.right_paddle.rect.y <= 0.0 {
                 self.right_paddle.rect.y = 0.0
             }
 
             // Right paddle with bottom wall
-            if self.right_paddle.rect.y + self.right_paddle.rect.h > self.game_height
-                || Self::check_collision(
-                    self.right_paddle.rect,
-                    Rect::new(0.0, self.game_height, self.game_width, 0.0),
-                )
-            {
+            if self.right_paddle.rect.y + self.right_paddle.rect.h > self.game_height {
                 self.right_paddle.rect.y = self.game_height - self.right_paddle.rect.h;
             }
         }
@@ -170,6 +150,36 @@ impl GameState {
             self.ball.dy = -self.ball.dy;
 
             self.play_sound(SoundType::Wall);
+        }
+
+        // If ball collides with left paddle
+        if Self::check_collision(
+            Rect::new(
+                self.ball.x - self.ball.radius,
+                self.ball.y - self.ball.radius,
+                self.ball.radius * 2.0,
+                self.ball.radius * 2.0,
+            ),
+            self.left_paddle.rect,
+        ) {
+            self.play_sound(SoundType::Pad);
+            self.ball.x = self.left_paddle.rect.x + self.left_paddle.rect.w + self.ball.radius;
+            self.ball.dx = -self.ball.dx;
+        }
+
+        // If ball collides with right paddle
+        if Self::check_collision(
+            Rect::new(
+                self.ball.x - self.ball.radius,
+                self.ball.y - self.ball.radius,
+                self.ball.radius * 2.0,
+                self.ball.radius * 2.0,
+            ),
+            self.right_paddle.rect,
+        ) {
+            self.play_sound(SoundType::Pad);
+            self.ball.x = self.right_paddle.rect.x - self.ball.radius;
+            self.ball.dx = -self.ball.dx;
         }
     }
 
