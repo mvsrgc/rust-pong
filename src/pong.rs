@@ -1,9 +1,16 @@
-use ggez::input::keyboard::{KeyCode, KeyMods};
-use ggez::input::mouse::MouseButton;
+use std::time::Duration;
+
+use ggez::{
+    audio::SoundSource,
+    input::keyboard::{KeyCode, KeyMods},
+};
+use ggez::{input::mouse::MouseButton, GameError};
 
 use ggez::event::EventHandler;
 use ggez::timer;
 use ggez::{Context, GameResult};
+
+use ggez::audio;
 
 use crate::{ball::Ball, paddle::Paddle};
 
@@ -22,6 +29,12 @@ pub enum Direction {
     Down,
 }
 
+pub enum SoundType {
+    Goal,
+    Pad,
+    Wall,
+}
+
 pub struct GameState {
     pub clicks: usize,
     pub mouse_x: f32,
@@ -34,10 +47,13 @@ pub struct GameState {
     pub ball: Ball,
     pub game_width: f32,
     pub game_height: f32,
+    pub goal_sound: audio::Source,
+    pub pad_sound: audio::Source,
+    pub wall_sound: audio::Source,
 }
 
 impl GameState {
-    pub fn new(game_width: f32, game_height: f32) -> GameState {
+    pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> GameState {
         let time_scale: f64 = DEFAULT_TIME_SCALE;
         GameState {
             clicks: 0,
@@ -51,6 +67,9 @@ impl GameState {
             left_paddle: Paddle::new(game_width, game_height, Side::Left),
             right_paddle: Paddle::new(game_width, game_height, Side::Right),
             ball: Ball::new(game_width, game_height),
+            goal_sound: audio::Source::new(ctx, "/goal.wav").unwrap(),
+            pad_sound: audio::Source::new(ctx, "/pad.wav").unwrap(),
+            wall_sound: audio::Source::new(ctx, "/wall.wav").unwrap(),
         }
     }
 
@@ -87,34 +106,54 @@ impl GameState {
             }
         }
 
+        // Update ball position
         self.ball.x = (self.ball.x as f64 + (self.ball.dx as f64 * time)) as f32;
         self.ball.y = (self.ball.y as f64 + (self.ball.dy as f64 * time)) as f32;
 
+        // If ball collides with left or right wall
         if self.ball.x - self.ball.radius <= 0.0
             || self.ball.x + self.ball.radius >= self.game_width
         {
+            // Left wall
             if self.ball.x - self.ball.radius <= 0.0 {
                 self.ball.x = 0.0 + self.ball.radius;
             }
 
+            // Right wall
             if self.ball.x + self.ball.radius >= self.game_width {
                 self.ball.x = self.game_width - self.ball.radius;
             }
+
             self.ball.dx = -self.ball.dx;
+
+            self.play_sound(SoundType::Goal);
         }
 
+        // If ball collides with bottom or top wall
         if self.ball.y - self.ball.radius <= 0.0
             || self.ball.y + self.ball.radius >= self.game_height
         {
+            // Top wall
             if self.ball.y - self.ball.radius <= 0.0 {
                 self.ball.y = 0.0 + self.ball.radius;
             }
 
+            // Bottom wall
             if self.ball.y + self.ball.radius >= self.game_height {
                 self.ball.y = self.game_height - self.ball.radius;
             }
 
             self.ball.dy = -self.ball.dy;
+
+            self.play_sound(SoundType::Wall);
+        }
+    }
+
+    pub fn play_sound(&mut self, sound_type: SoundType) {
+        match sound_type {
+            SoundType::Goal => self.goal_sound.play_detached().unwrap(),
+            SoundType::Pad => self.pad_sound.play_detached().unwrap(),
+            SoundType::Wall => self.wall_sound.play_detached().unwrap(),
         }
     }
 }

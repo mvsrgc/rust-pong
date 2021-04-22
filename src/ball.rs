@@ -1,8 +1,8 @@
 use rand::distributions::{Distribution, Uniform};
 
 // Has a lot in common with Ball...
-const BALL_RADIUS: f32 = 12.0;
-const BALL_SPEED: f32 = 350.0;
+const BALL_RADIUS: f32 = 8.0;
+const BALL_SPEED: f32 = 450.0;
 pub struct Ball {
     pub x: f32,
     pub y: f32,
