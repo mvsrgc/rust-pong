@@ -1,10 +1,10 @@
-use std::time::Duration;
-
 use ggez::{
     audio::SoundSource,
     input::keyboard::{KeyCode, KeyMods},
 };
-use ggez::{input::mouse::MouseButton, GameError};
+use ggez::{input::mouse::MouseButton, timer::check_update_time};
+
+use ggez::graphics::Rect;
 
 use ggez::event::EventHandler;
 use ggez::timer;
@@ -78,33 +78,55 @@ impl GameState {
     pub fn simulate(&mut self, time: f64) {
         if self.left_paddle.direction != 0.0 {
             let distance = self.left_paddle.speed as f64 * time;
-            self.left_paddle.y =
-                self.left_paddle.y - (distance as f32 * self.left_paddle.direction);
 
-            if self.left_paddle.direction == DIRECTION_UP && self.left_paddle.y < 0.0 {
-                self.left_paddle.y = 0.0;
+            self.left_paddle.rect.y =
+                self.left_paddle.rect.y - (distance as f32 * self.left_paddle.direction);
+
+            // Left paddle with top wall
+            if self.left_paddle.rect.y <= 0.0
+                || Self::check_collision(
+                    self.left_paddle.rect,
+                    Rect::new(0.0, 0.0, self.game_width, 0.0),
+                )
+            {
+                self.left_paddle.rect.y = 0.0
             }
 
-            if self.left_paddle.direction == DIRECTION_DOWN
-                && self.left_paddle.y + self.left_paddle.h > self.game_height
+            // Left paddle with bottom wall
+            if self.left_paddle.rect.y + self.left_paddle.rect.h >= self.game_height
+                || Self::check_collision(
+                    self.left_paddle.rect,
+                    Rect::new(0.0, self.game_height, self.game_width, 0.0),
+                )
             {
-                self.left_paddle.y = self.game_height - self.left_paddle.h;
+                self.left_paddle.rect.y = self.game_height - self.left_paddle.rect.h;
             }
         }
 
         if self.right_paddle.direction != 0.0 {
             let distance = self.right_paddle.speed as f64 * time;
-            self.right_paddle.y =
-                self.right_paddle.y - (distance as f32 * self.right_paddle.direction);
 
-            if self.right_paddle.direction == DIRECTION_UP && self.right_paddle.y < 0.0 {
-                self.right_paddle.y = 0.0;
+            self.right_paddle.rect.y =
+                self.right_paddle.rect.y - (distance as f32 * self.right_paddle.direction);
+
+            // Right paddle with top wall
+            if self.right_paddle.rect.y <= 0.0
+                || Self::check_collision(
+                    self.right_paddle.rect,
+                    Rect::new(0.0, 0.0, self.game_width, 0.0),
+                )
+            {
+                self.right_paddle.rect.y = 0.0
             }
 
-            if self.right_paddle.direction == DIRECTION_DOWN
-                && self.right_paddle.y + self.right_paddle.h > self.game_height
+            // Right paddle with bottom wall
+            if self.right_paddle.rect.y + self.right_paddle.rect.h > self.game_height
+                || Self::check_collision(
+                    self.right_paddle.rect,
+                    Rect::new(0.0, self.game_height, self.game_width, 0.0),
+                )
             {
-                self.right_paddle.y = self.game_height - self.right_paddle.h;
+                self.right_paddle.rect.y = self.game_height - self.right_paddle.rect.h;
             }
         }
 
@@ -149,6 +171,44 @@ impl GameState {
 
             self.play_sound(SoundType::Wall);
         }
+    }
+
+    pub fn check_collision(a: Rect, b: Rect) -> bool {
+        // Sides
+        let (left_a, left_b): (f32, f32);
+        let (right_a, right_b): (f32, f32);
+        let (top_a, top_b): (f32, f32);
+        let (bottom_a, bottom_b): (f32, f32);
+
+        left_a = a.x;
+        right_a = a.x + a.w;
+
+        top_a = a.y;
+        bottom_a = a.y + a.h;
+
+        left_b = b.x;
+        right_b = b.x + b.w;
+
+        top_b = b.y;
+        bottom_b = b.y + b.h;
+
+        if bottom_a <= top_b {
+            return false;
+        }
+
+        if top_a >= bottom_b {
+            return false;
+        }
+
+        if right_a <= left_b {
+            return false;
+        }
+
+        if left_a >= right_b {
+            return false;
+        }
+
+        true
     }
 
     pub fn play_sound(&mut self, sound_type: SoundType) {

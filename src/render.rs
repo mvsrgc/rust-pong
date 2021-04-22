@@ -69,18 +69,18 @@ impl GameState {
 
         let left_rectangle = build_rectangle(
             ctx,
-            self.left_paddle.x,
-            self.left_paddle.y,
-            self.left_paddle.w,
-            self.left_paddle.h,
+            self.left_paddle.rect.x,
+            self.left_paddle.rect.y,
+            self.left_paddle.rect.w,
+            self.left_paddle.rect.h,
         )?;
 
         let right_rectangle = build_rectangle(
             ctx,
-            self.right_paddle.x,
-            self.right_paddle.y,
-            self.right_paddle.w,
-            self.right_paddle.h,
+            self.right_paddle.rect.x,
+            self.right_paddle.rect.y,
+            self.right_paddle.rect.w,
+            self.right_paddle.rect.h,
         )?;
 
         let net_line = build_net_line(ctx, self.game_width, self.game_height)?;
