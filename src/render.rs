@@ -1,9 +1,8 @@
-use ggez::graphics::DrawMode;
-
-use ggez::graphics::{self, DrawParam};
+use ggez::graphics::{self, DrawMode, DrawParam, Scale};
 use ggez::nalgebra::Point2;
 use ggez::timer;
 use ggez::{Context, GameResult};
+use graphics::{Font, Text};
 
 use crate::pong::GameState;
 
@@ -94,6 +93,18 @@ impl GameState {
         graphics::draw(ctx, &right_rectangle, DrawParam::default())?;
         graphics::draw(ctx, &net_line, DrawParam::default())?;
         graphics::draw(ctx, &ball, DrawParam::default())?;
+
+        let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;
+
+        let mut text = Text::new("PONG");
+
+        text.set_font(fancy_font.clone(), Scale::uniform(80.0))
+            .set_bounds(
+                Point2::new(self.game_width, f32::INFINITY),
+                graphics::Align::Center,
+            );
+
+        graphics::draw(ctx, &text, DrawParam::default())?;
 
         graphics::present(ctx)
     }

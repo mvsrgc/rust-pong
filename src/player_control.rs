@@ -35,6 +35,7 @@ impl GameState {
     ) {
         match keycode {
             KeyCode::F1 => self.debug_mode = !self.debug_mode,
+            KeyCode::F2 => self.play_sounds = !self.play_sounds,
             KeyCode::Escape => event::quit(ctx),
             KeyCode::W => self.left_paddle.direction = DIRECTION_UP,
             KeyCode::S => self.left_paddle.direction = DIRECTION_DOWN,

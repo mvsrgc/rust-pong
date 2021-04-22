@@ -1,6 +1,6 @@
 const PADDLE_WIDTH: f32 = 12.0;
-const PADDLE_HEIGHT: f32 = 96.0;
-const PADDLE_SPEED: f32 = 350.0;
+const PADDLE_HEIGHT: f32 = 70.0;
+const PADDLE_SPEED: f32 = 325.0;
 
 use crate::pong::Side;
 

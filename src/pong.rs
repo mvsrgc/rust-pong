@@ -50,6 +50,7 @@ pub struct GameState {
     pub goal_sound: audio::Source,
     pub pad_sound: audio::Source,
     pub wall_sound: audio::Source,
+    pub play_sounds: bool,
 }
 
 impl GameState {
@@ -70,6 +71,7 @@ impl GameState {
             goal_sound: audio::Source::new(ctx, "/goal.wav").unwrap(),
             pad_sound: audio::Source::new(ctx, "/pad.wav").unwrap(),
             wall_sound: audio::Source::new(ctx, "/wall.wav").unwrap(),
+            play_sounds: true,
         }
     }
 
@@ -150,10 +152,12 @@ impl GameState {
     }
 
     pub fn play_sound(&mut self, sound_type: SoundType) {
-        match sound_type {
-            SoundType::Goal => self.goal_sound.play_detached().unwrap(),
-            SoundType::Pad => self.pad_sound.play_detached().unwrap(),
-            SoundType::Wall => self.wall_sound.play_detached().unwrap(),
+        if self.play_sounds {
+            match sound_type {
+                SoundType::Goal => self.goal_sound.play_detached().unwrap(),
+                SoundType::Pad => self.pad_sound.play_detached().unwrap(),
+                SoundType::Wall => self.wall_sound.play_detached().unwrap(),
+            }
         }
     }
 }
