@@ -90,8 +90,32 @@ impl GameState {
         self.ball.x = (self.ball.x as f64 + (self.ball.dx as f64 * time)) as f32;
         self.ball.y = (self.ball.y as f64 + (self.ball.dy as f64 * time)) as f32;
 
-        // Test
-        // Test 2
+        if self.ball.x - self.ball.radius <= 0.0
+            || self.ball.x + self.ball.radius >= self.game_width
+        {
+            if self.ball.x - self.ball.radius <= 0.0 {
+                self.ball.x = 0.0 + self.ball.radius;
+            }
+
+            if self.ball.x + self.ball.radius >= self.game_width {
+                self.ball.x = self.game_width - self.ball.radius;
+            }
+            self.ball.dx = -self.ball.dx;
+        }
+
+        if self.ball.y - self.ball.radius <= 0.0
+            || self.ball.y + self.ball.radius >= self.game_height
+        {
+            if self.ball.y - self.ball.radius <= 0.0 {
+                self.ball.y = 0.0 + self.ball.radius;
+            }
+
+            if self.ball.y + self.ball.radius >= self.game_height {
+                self.ball.y = self.game_height - self.ball.radius;
+            }
+
+            self.ball.dy = -self.ball.dy;
+        }
     }
 }
 
