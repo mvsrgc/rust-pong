@@ -68,21 +68,18 @@ impl GameState {
             graphics::draw(ctx, &dt_display, (Point2::new(0.0, 40.0), graphics::WHITE))?;
         }
 
-        let left_rectangle = build_rectangle(
-            ctx,
-            self.left_paddle.rect.x,
-            self.left_paddle.rect.y,
-            self.left_paddle.rect.w,
-            self.left_paddle.rect.h,
-        )?;
+        let mut paddle_rectangles = vec![];
+        for i in 0..self.paddles.len() {
+            let paddle_rect = build_rectangle(
+                ctx,
+                self.paddles[i].rect.x,
+                self.paddles[i].rect.y,
+                self.paddles[i].rect.w,
+                self.paddles[i].rect.h,
+            )?;
 
-        let right_rectangle = build_rectangle(
-            ctx,
-            self.right_paddle.rect.x,
-            self.right_paddle.rect.y,
-            self.right_paddle.rect.w,
-            self.right_paddle.rect.h,
-        )?;
+            paddle_rectangles.push(paddle_rect);
+        }
 
         let net_line = build_net_line(ctx, self.game_width, self.game_height)?;
 
@@ -90,8 +87,8 @@ impl GameState {
         // on that vec and call draw() on everything ?
         let ball = build_circle(ctx, self.ball.x, self.ball.y, self.ball.radius)?;
 
-        graphics::draw(ctx, &left_rectangle, DrawParam::default())?;
-        graphics::draw(ctx, &right_rectangle, DrawParam::default())?;
+        graphics::draw(ctx, &paddle_rectangles[0], DrawParam::default())?;
+        graphics::draw(ctx, &paddle_rectangles[1], DrawParam::default())?;
         graphics::draw(ctx, &net_line, DrawParam::default())?;
         graphics::draw(ctx, &ball, DrawParam::default())?;
 

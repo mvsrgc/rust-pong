@@ -36,8 +36,7 @@ pub struct GameState {
     pub dt: f64,
     pub time_scale: f64,
     pub debug_mode: bool,
-    pub left_paddle: Paddle,
-    pub right_paddle: Paddle,
+    pub paddles: Vec<Paddle>,
     pub ball: Ball,
     pub game_width: f32,
     pub game_height: f32,
@@ -50,6 +49,12 @@ pub struct GameState {
 impl GameState {
     pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> GameState {
         let time_scale: f64 = DEFAULT_TIME_SCALE;
+
+        let left_paddle = Paddle::new(game_width, game_height, Side::Left);
+        let right_paddle = Paddle::new(game_width, game_height, Side::Right);
+
+        let paddles = vec![left_paddle, right_paddle];
+
         GameState {
             clicks: 0,
             mouse_x: 0.0,
@@ -59,8 +64,7 @@ impl GameState {
             debug_mode: false,
             game_width,
             game_height,
-            left_paddle: Paddle::new(game_width, game_height, Side::Left),
-            right_paddle: Paddle::new(game_width, game_height, Side::Right),
+            paddles,
             ball: Ball::new(game_width, game_height),
             goal_sound: audio::Source::new(ctx, "/goal.wav").unwrap(),
             pad_sound: audio::Source::new(ctx, "/pad.wav").unwrap(),
@@ -70,56 +74,32 @@ impl GameState {
     }
 
     pub fn simulate(&mut self, time: f64) {
-        match self.left_paddle.direction {
-            Direction::Up | Direction::Down => {
-                let distance = self.left_paddle.dy as f64 * time;
+        for i in 0..self.paddles.len() {
+            match self.paddles[i].direction {
+                Direction::Up | Direction::Down => {
+                    let distance = self.paddles[i].dy as f64 * time;
 
-                let direction_value = match self.left_paddle.direction {
-                    Direction::Up => 1.0,
-                    Direction::Down => -1.0,
-                    Direction::None => 0.0,
-                };
+                    let direction_value = match self.paddles[i].direction {
+                        Direction::Up => 1.0,
+                        Direction::Down => -1.0,
+                        Direction::None => 0.0,
+                    };
 
-                self.left_paddle.rect.y =
-                    self.left_paddle.rect.y - (distance as f32 * direction_value);
+                    self.paddles[i].rect.y =
+                        self.paddles[i].rect.y - (distance as f32 * direction_value);
 
-                // Left paddle with top wall
-                if self.left_paddle.rect.y <= 0.0 {
-                    self.left_paddle.rect.y = 0.0
+                    // Left paddle with top wall
+                    if self.paddles[i].rect.y <= 0.0 {
+                        self.paddles[i].rect.y = 0.0
+                    }
+
+                    // Left paddle with bottom wall
+                    if self.paddles[i].rect.y + self.paddles[i].rect.h >= self.game_height {
+                        self.paddles[i].rect.y = self.game_height - self.paddles[i].rect.h;
+                    }
                 }
-
-                // Left paddle with bottom wall
-                if self.left_paddle.rect.y + self.left_paddle.rect.h >= self.game_height {
-                    self.left_paddle.rect.y = self.game_height - self.left_paddle.rect.h;
-                }
+                Direction::None => {}
             }
-            Direction::None => {}
-        }
-
-        match self.right_paddle.direction {
-            Direction::Up | Direction::Down => {
-                let distance = self.right_paddle.dy as f64 * time;
-
-                let direction_value = match self.right_paddle.direction {
-                    Direction::Up => 1.0,
-                    Direction::Down => -1.0,
-                    Direction::None => 0.0,
-                };
-
-                self.right_paddle.rect.y =
-                    self.right_paddle.rect.y - (distance as f32 * direction_value);
-
-                // Right paddle with top wall
-                if self.right_paddle.rect.y <= 0.0 {
-                    self.right_paddle.rect.y = 0.0
-                }
-
-                // Right paddle with bottom wall
-                if self.right_paddle.rect.y + self.right_paddle.rect.h > self.game_height {
-                    self.right_paddle.rect.y = self.game_height - self.right_paddle.rect.h;
-                }
-            }
-            Direction::None => {}
         }
 
         // Update ball position
@@ -164,34 +144,29 @@ impl GameState {
             self.play_sound(SoundType::Wall);
         }
 
-        // If ball collides with left paddle
-        if Self::check_collision(
-            Rect::new(
-                self.ball.x - self.ball.radius,
-                self.ball.y - self.ball.radius,
-                self.ball.radius * 2.0,
-                self.ball.radius * 2.0,
-            ),
-            self.left_paddle.rect,
-        ) {
-            self.play_sound(SoundType::Pad);
-            self.ball.x = self.left_paddle.rect.x + self.left_paddle.rect.w + self.ball.radius;
-            self.ball.dx = -self.ball.dx;
-        }
+        for i in 0..self.paddles.len() {
+            if Self::check_collision(
+                Rect::new(
+                    self.ball.x - self.ball.radius,
+                    self.ball.y - self.ball.radius,
+                    self.ball.radius * 2.0,
+                    self.ball.radius * 2.0,
+                ),
+                self.paddles[i].rect,
+            ) {
+                self.play_sound(SoundType::Pad);
 
-        // If ball collides with right paddle
-        if Self::check_collision(
-            Rect::new(
-                self.ball.x - self.ball.radius,
-                self.ball.y - self.ball.radius,
-                self.ball.radius * 2.0,
-                self.ball.radius * 2.0,
-            ),
-            self.right_paddle.rect,
-        ) {
-            self.play_sound(SoundType::Pad);
-            self.ball.x = self.right_paddle.rect.x - self.ball.radius;
-            self.ball.dx = -self.ball.dx;
+                // If right paddle
+                if i == 1 {
+                    self.ball.x = self.paddles[i].rect.x - self.ball.radius;
+                } else {
+                    // If left paddle
+                    self.ball.x =
+                        self.paddles[i].rect.x + self.paddles[i].rect.w + self.ball.radius;
+                }
+
+                self.ball.dx = -self.ball.dx;
+            }
         }
     }
 

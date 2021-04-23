@@ -1,10 +1,10 @@
 use ggez::graphics::Rect;
 
-use crate::pong::{Side, Direction};
+use crate::pong::{Direction, Side};
 
 const PADDLE_WIDTH: f32 = 12.0;
 const PADDLE_HEIGHT: f32 = 75.0;
-const PADDLE_SPEED: f32 = 350.0;
+const PADDLE_SPEED: f32 = 450.0;
 
 pub struct Paddle {
     pub rect: Rect,
