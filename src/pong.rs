@@ -11,6 +11,8 @@ use ggez::{
 use crate::{ball::Ball, paddle::Paddle};
 
 pub const DEFAULT_TIME_SCALE: f64 = 1.0;
+pub const LEFT_PADDLE_INDEX: usize = 0;
+pub const RIGHT_PADDLE_INDEX: usize = 1;
 
 pub enum Side {
     Left,
@@ -75,30 +77,24 @@ impl GameState {
 
     pub fn simulate(&mut self, time: f64) {
         for i in 0..self.paddles.len() {
-            match self.paddles[i].direction {
-                Direction::Up | Direction::Down => {
-                    let distance = self.paddles[i].dy as f64 * time;
+            let distance = self.paddles[i].dy as f64 * time;
 
-                    let direction_value = match self.paddles[i].direction {
-                        Direction::Up => 1.0,
-                        Direction::Down => -1.0,
-                        Direction::None => 0.0,
-                    };
+            let direction_value = match self.paddles[i].direction {
+                Direction::Up => 1.0,
+                Direction::Down => -1.0,
+                Direction::None => 0.0,
+            };
 
-                    self.paddles[i].rect.y =
-                        self.paddles[i].rect.y - (distance as f32 * direction_value);
+            self.paddles[i].rect.y = self.paddles[i].rect.y - (distance as f32 * direction_value);
 
-                    // Left paddle with top wall
-                    if self.paddles[i].rect.y <= 0.0 {
-                        self.paddles[i].rect.y = 0.0
-                    }
+            // Left paddle with top wall
+            if self.paddles[i].rect.y <= 0.0 {
+                self.paddles[i].rect.y = 0.0
+            }
 
-                    // Left paddle with bottom wall
-                    if self.paddles[i].rect.y + self.paddles[i].rect.h >= self.game_height {
-                        self.paddles[i].rect.y = self.game_height - self.paddles[i].rect.h;
-                    }
-                }
-                Direction::None => {}
+            // Left paddle with bottom wall
+            if self.paddles[i].rect.y + self.paddles[i].rect.h >= self.game_height {
+                self.paddles[i].rect.y = self.game_height - self.paddles[i].rect.h;
             }
         }
 
@@ -156,11 +152,9 @@ impl GameState {
             ) {
                 self.play_sound(SoundType::Pad);
 
-                // If right paddle
-                if i == 1 {
+                if i == RIGHT_PADDLE_INDEX {
                     self.ball.x = self.paddles[i].rect.x - self.ball.radius;
                 } else {
-                    // If left paddle
                     self.ball.x =
                         self.paddles[i].rect.x + self.paddles[i].rect.w + self.ball.radius;
                 }

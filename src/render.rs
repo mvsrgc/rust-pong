@@ -5,7 +5,7 @@ use ggez::{
     timer, Context, GameResult,
 };
 
-use crate::pong::GameState;
+use crate::pong::{GameState, LEFT_PADDLE_INDEX, RIGHT_PADDLE_INDEX};
 
 fn build_rectangle(
     ctx: &mut Context,
@@ -87,8 +87,16 @@ impl GameState {
         // on that vec and call draw() on everything ?
         let ball = build_circle(ctx, self.ball.x, self.ball.y, self.ball.radius)?;
 
-        graphics::draw(ctx, &paddle_rectangles[0], DrawParam::default())?;
-        graphics::draw(ctx, &paddle_rectangles[1], DrawParam::default())?;
+        graphics::draw(
+            ctx,
+            &paddle_rectangles[LEFT_PADDLE_INDEX],
+            DrawParam::default(),
+        )?;
+        graphics::draw(
+            ctx,
+            &paddle_rectangles[RIGHT_PADDLE_INDEX],
+            DrawParam::default(),
+        )?;
         graphics::draw(ctx, &net_line, DrawParam::default())?;
         graphics::draw(ctx, &ball, DrawParam::default())?;
 
