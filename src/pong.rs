@@ -85,12 +85,12 @@ impl GameState {
 
             self.paddles[i].rect.y = self.paddles[i].rect.y - (distance as f32 * direction_value);
 
-            // Left paddle with top wall
+            // Paddle collides with top wall
             if self.paddles[i].rect.y <= 0.0 {
                 self.paddles[i].rect.y = 0.0
             }
 
-            // Left paddle with bottom wall
+            // Paddle collides with bottom wall
             if self.paddles[i].rect.y + self.paddles[i].rect.h >= self.game_height {
                 self.paddles[i].rect.y = self.game_height - self.paddles[i].rect.h;
             }
@@ -138,6 +138,7 @@ impl GameState {
             self.play_sound(SoundType::Wall);
         }
 
+        // If ball collides with paddles
         for i in 0..self.paddles.len() {
             if Self::check_collision(
                 Rect::new(
