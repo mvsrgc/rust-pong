@@ -5,9 +5,7 @@ use ggez::{
     Context,
 };
 
-use crate::pong::{
-    Direction, GameState, DEFAULT_TIME_SCALE, LEFT_PADDLE_INDEX, RIGHT_PADDLE_INDEX,
-};
+use crate::pong::{Direction, GameState, Side, DEFAULT_TIME_SCALE};
 
 impl GameState {
     pub fn mouse_button_up_event(
@@ -39,10 +37,38 @@ impl GameState {
             KeyCode::F1 => self.debug_mode = !self.debug_mode,
             KeyCode::F2 => self.play_sounds = !self.play_sounds,
             KeyCode::Escape => event::quit(ctx),
-            KeyCode::W => self.paddles[LEFT_PADDLE_INDEX].direction = Direction::Up,
-            KeyCode::S => self.paddles[LEFT_PADDLE_INDEX].direction = Direction::Down,
-            KeyCode::Up => self.paddles[RIGHT_PADDLE_INDEX].direction = Direction::Up,
-            KeyCode::Down => self.paddles[RIGHT_PADDLE_INDEX].direction = Direction::Down,
+            KeyCode::W => {
+                for i in 0..self.paddles.len() {
+                    match self.paddles[i].side {
+                        Side::Left => self.paddles[i].direction = Direction::Up,
+                        Side::Right => {}
+                    }
+                }
+            }
+            KeyCode::S => {
+                for i in 0..self.paddles.len() {
+                    match self.paddles[i].side {
+                        Side::Left => self.paddles[i].direction = Direction::Down,
+                        Side::Right => {}
+                    }
+                }
+            }
+            KeyCode::Up => {
+                for i in 0..self.paddles.len() {
+                    match self.paddles[i].side {
+                        Side::Left => {}
+                        Side::Right => self.paddles[i].direction = Direction::Up,
+                    }
+                }
+            }
+            KeyCode::Down => {
+                for i in 0..self.paddles.len() {
+                    match self.paddles[i].side {
+                        Side::Left => {}
+                        Side::Right => self.paddles[i].direction = Direction::Down,
+                    }
+                }
+            }
             KeyCode::PageUp => self.time_scale *= 1.5,
             KeyCode::PageDown => self.time_scale /= 1.5,
             KeyCode::Home => self.time_scale = DEFAULT_TIME_SCALE,

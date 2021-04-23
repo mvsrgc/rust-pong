@@ -8,6 +8,7 @@ const PADDLE_SPEED: f32 = 450.0;
 
 pub struct Paddle {
     pub rect: Rect,
+    pub side: Side,
     pub dy: f32,
     pub direction: Direction,
 }
@@ -24,9 +25,10 @@ impl Paddle {
         let h = PADDLE_HEIGHT;
 
         Paddle {
+            rect: Rect::new(x, y, w, h),
+            side,
             dy: PADDLE_SPEED,
             direction: Direction::None,
-            rect: Rect::new(x, y, w, h),
         }
     }
 }

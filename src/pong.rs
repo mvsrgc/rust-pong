@@ -11,8 +11,6 @@ use ggez::{
 use crate::{ball::Ball, paddle::Paddle};
 
 pub const DEFAULT_TIME_SCALE: f64 = 1.0;
-pub const LEFT_PADDLE_INDEX: usize = 0;
-pub const RIGHT_PADDLE_INDEX: usize = 1;
 
 pub enum Side {
     Left,
@@ -71,7 +69,7 @@ impl GameState {
             goal_sound: audio::Source::new(ctx, "/goal.wav").unwrap(),
             pad_sound: audio::Source::new(ctx, "/pad.wav").unwrap(),
             wall_sound: audio::Source::new(ctx, "/wall.wav").unwrap(),
-            play_sounds: true,
+            play_sounds: false,
         }
     }
 
@@ -152,11 +150,14 @@ impl GameState {
             ) {
                 self.play_sound(SoundType::Pad);
 
-                if i == RIGHT_PADDLE_INDEX {
-                    self.ball.x = self.paddles[i].rect.x - self.ball.radius;
-                } else {
-                    self.ball.x =
-                        self.paddles[i].rect.x + self.paddles[i].rect.w + self.ball.radius;
+                match self.paddles[i].side {
+                    Side::Left => {
+                        self.ball.x =
+                            self.paddles[i].rect.x + self.paddles[i].rect.w + self.ball.radius;
+                    }
+                    Side::Right => {
+                        self.ball.x = self.paddles[i].rect.x - self.ball.radius;
+                    }
                 }
 
                 self.ball.dx = -self.ball.dx;
