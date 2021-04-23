@@ -1,8 +1,9 @@
-use ggez::graphics::{self, DrawMode, DrawParam, Scale};
-use ggez::nalgebra::Point2;
-use ggez::timer;
-use ggez::{Context, GameResult};
-use graphics::{Font, Text};
+use ggez::{
+    graphics::{self, DrawMode, DrawParam, Scale},
+    graphics::{Font, Text},
+    nalgebra::Point2,
+    timer, Context, GameResult,
+};
 
 use crate::pong::GameState;
 

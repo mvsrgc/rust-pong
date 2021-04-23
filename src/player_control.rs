@@ -1,11 +1,11 @@
-use ggez::input::keyboard::{KeyCode, KeyMods};
-use ggez::input::mouse::MouseButton;
+use ggez::{
+    event,
+    input::keyboard::{KeyCode, KeyMods},
+    input::mouse::MouseButton,
+    Context,
+};
 
-use ggez::Context;
-use ggez::*;
-
-use crate::pong::GameState;
-use crate::pong::{DEFAULT_TIME_SCALE, DIRECTION_DOWN, DIRECTION_UP};
+use crate::pong::{GameState, DEFAULT_TIME_SCALE, DIRECTION_DOWN, DIRECTION_UP};
 
 impl GameState {
     pub fn mouse_button_up_event(

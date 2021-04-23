@@ -1,5 +1,4 @@
-use ggez::event;
-use ggez::{conf, GameResult};
+use ggez::{conf, event, GameResult};
 
 pub mod ball;
 pub mod paddle;

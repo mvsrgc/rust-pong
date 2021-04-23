@@ -1,4 +1,5 @@
 use rand::distributions::{Distribution, Uniform};
+use rand::thread_rng;
 
 // Has a lot in common with Ball...
 const BALL_RADIUS: f32 = 8.0;
@@ -13,7 +14,7 @@ pub struct Ball {
 
 impl Ball {
     pub fn new(game_width: f32, game_height: f32) -> Ball {
-        let mut rng = rand::thread_rng();
+        let mut rng = thread_rng();
 
         let directions = vec![1, -1];
 

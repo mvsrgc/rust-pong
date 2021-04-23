@@ -1,16 +1,12 @@
 use ggez::{
+    audio,
     audio::SoundSource,
+    event::EventHandler,
+    graphics::Rect,
     input::keyboard::{KeyCode, KeyMods},
+    input::mouse::MouseButton,
+    timer, Context, GameResult,
 };
-use ggez::{input::mouse::MouseButton, timer::check_update_time};
-
-use ggez::graphics::Rect;
-
-use ggez::event::EventHandler;
-use ggez::timer;
-use ggez::{Context, GameResult};
-
-use ggez::audio;
 
 use crate::{ball::Ball, paddle::Paddle};
 
