@@ -12,9 +12,6 @@ use crate::{ball::Ball, paddle::Paddle};
 
 pub const DEFAULT_TIME_SCALE: f64 = 1.0;
 
-pub const DIRECTION_UP: f32 = 1.0;
-pub const DIRECTION_DOWN: f32 = -1.0;
-
 pub enum Side {
     Left,
     Right,
@@ -23,6 +20,7 @@ pub enum Side {
 pub enum Direction {
     Up,
     Down,
+    None,
 }
 
 pub enum SoundType {
@@ -72,38 +70,56 @@ impl GameState {
     }
 
     pub fn simulate(&mut self, time: f64) {
-        if self.left_paddle.direction != 0.0 {
-            let distance = self.left_paddle.speed as f64 * time;
+        match self.left_paddle.direction {
+            Direction::Up | Direction::Down => {
+                let distance = self.left_paddle.dy as f64 * time;
 
-            self.left_paddle.rect.y =
-                self.left_paddle.rect.y - (distance as f32 * self.left_paddle.direction);
+                let direction_value = match self.left_paddle.direction {
+                    Direction::Up => 1.0,
+                    Direction::Down => -1.0,
+                    Direction::None => 0.0,
+                };
 
-            // Left paddle with top wall
-            if self.left_paddle.rect.y <= 0.0 {
-                self.left_paddle.rect.y = 0.0
+                self.left_paddle.rect.y =
+                    self.left_paddle.rect.y - (distance as f32 * direction_value);
+
+                // Left paddle with top wall
+                if self.left_paddle.rect.y <= 0.0 {
+                    self.left_paddle.rect.y = 0.0
+                }
+
+                // Left paddle with bottom wall
+                if self.left_paddle.rect.y + self.left_paddle.rect.h >= self.game_height {
+                    self.left_paddle.rect.y = self.game_height - self.left_paddle.rect.h;
+                }
             }
-
-            // Left paddle with bottom wall
-            if self.left_paddle.rect.y + self.left_paddle.rect.h >= self.game_height {
-                self.left_paddle.rect.y = self.game_height - self.left_paddle.rect.h;
-            }
+            Direction::None => {}
         }
 
-        if self.right_paddle.direction != 0.0 {
-            let distance = self.right_paddle.speed as f64 * time;
+        match self.right_paddle.direction {
+            Direction::Up | Direction::Down => {
+                let distance = self.right_paddle.dy as f64 * time;
 
-            self.right_paddle.rect.y =
-                self.right_paddle.rect.y - (distance as f32 * self.right_paddle.direction);
+                let direction_value = match self.right_paddle.direction {
+                    Direction::Up => 1.0,
+                    Direction::Down => -1.0,
+                    Direction::None => 0.0,
+                };
 
-            // Right paddle with top wall
-            if self.right_paddle.rect.y <= 0.0 {
-                self.right_paddle.rect.y = 0.0
+                self.right_paddle.rect.y =
+                    self.right_paddle.rect.y - (distance as f32 * direction_value);
+
+                // Right paddle with top wall
+                if self.right_paddle.rect.y <= 0.0 {
+                    self.right_paddle.rect.y = 0.0
+                }
+
+                // Right paddle with bottom wall
+                if self.right_paddle.rect.y + self.right_paddle.rect.h > self.game_height {
+                    self.right_paddle.rect.y = self.game_height - self.right_paddle.rect.h;
+                }
             }
-
-            // Right paddle with bottom wall
-            if self.right_paddle.rect.y + self.right_paddle.rect.h > self.game_height {
-                self.right_paddle.rect.y = self.game_height - self.right_paddle.rect.h;
-            }
+            Direction::None => {}
         }
 
         // Update ball position

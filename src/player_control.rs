@@ -5,7 +5,7 @@ use ggez::{
     Context,
 };
 
-use crate::pong::{GameState, DEFAULT_TIME_SCALE, DIRECTION_DOWN, DIRECTION_UP};
+use crate::pong::{Direction, GameState, DEFAULT_TIME_SCALE};
 
 impl GameState {
     pub fn mouse_button_up_event(
@@ -37,10 +37,10 @@ impl GameState {
             KeyCode::F1 => self.debug_mode = !self.debug_mode,
             KeyCode::F2 => self.play_sounds = !self.play_sounds,
             KeyCode::Escape => event::quit(ctx),
-            KeyCode::W => self.left_paddle.direction = DIRECTION_UP,
-            KeyCode::S => self.left_paddle.direction = DIRECTION_DOWN,
-            KeyCode::Up => self.right_paddle.direction = DIRECTION_UP,
-            KeyCode::Down => self.right_paddle.direction = DIRECTION_DOWN,
+            KeyCode::W => self.left_paddle.direction = Direction::Up,
+            KeyCode::S => self.left_paddle.direction = Direction::Down,
+            KeyCode::Up => self.right_paddle.direction = Direction::Up,
+            KeyCode::Down => self.right_paddle.direction = Direction::Down,
             KeyCode::PageUp => self.time_scale *= 1.5,
             KeyCode::PageDown => self.time_scale /= 1.5,
             KeyCode::Home => self.time_scale = DEFAULT_TIME_SCALE,
