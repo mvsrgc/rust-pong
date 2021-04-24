@@ -71,7 +71,7 @@ impl GameState {
             goal_sound: audio::Source::new(ctx, "/goal.wav").unwrap(),
             pad_sound: audio::Source::new(ctx, "/pad.wav").unwrap(),
             wall_sound: audio::Source::new(ctx, "/wall.wav").unwrap(),
-            play_sounds: false,
+            play_sounds: true,
             paused: None,
             player1_score: 0,
             player2_score: 0,
