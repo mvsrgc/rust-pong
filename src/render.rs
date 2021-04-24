@@ -37,14 +37,6 @@ fn build_circle(ctx: &mut Context, x: f32, y: f32, r: f32) -> GameResult<graphic
     mb.build(ctx)
 }
 
-fn build_net_line(
-    ctx: &mut Context,
-    game_width: f32,
-    game_height: f32,
-) -> GameResult<graphics::Mesh> {
-    build_rectangle(ctx, game_width / 2.0 - (1.0 / 2.0), 0.0, 1.0, game_height)
-}
-
 impl GameState {
     pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         let fps_display = graphics::Text::new(format!("FPS: {}", timer::fps(ctx)));
@@ -81,8 +73,6 @@ impl GameState {
             paddle_rectangles.push(paddle_rect);
         }
 
-        let net_line = build_net_line(ctx, self.game_width, self.game_height)?;
-
         // @Cleanup Maybe have a vec that holds all the items in the game and then loop
         // on that vec and call draw() on everything ?
         let ball = build_circle(ctx, self.ball.x, self.ball.y, self.ball.radius)?;
@@ -90,7 +80,6 @@ impl GameState {
         for i in 0..self.paddles.len() {
             graphics::draw(ctx, &paddle_rectangles[i], DrawParam::default())?;
         }
-        graphics::draw(ctx, &net_line, DrawParam::default())?;
         graphics::draw(ctx, &ball, DrawParam::default())?;
 
         let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;

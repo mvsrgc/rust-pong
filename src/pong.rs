@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use ggez::{
     audio,
     audio::SoundSource,
@@ -38,6 +40,7 @@ pub struct GameState {
     pub pad_sound: audio::Source,
     pub wall_sound: audio::Source,
     pub play_sounds: bool,
+    pub paused: Option<Duration>,
 }
 
 impl GameState {
@@ -64,10 +67,35 @@ impl GameState {
             pad_sound: audio::Source::new(ctx, "/pad.wav").unwrap(),
             wall_sound: audio::Source::new(ctx, "/wall.wav").unwrap(),
             play_sounds: false,
+            paused: None,
         }
     }
 
-    pub fn simulate(&mut self, time: f64) {
+    pub fn simulate(&mut self, ctx: &mut Context, time: f64) {
+        match self.paused {
+            Some(time_paused) => {
+                if time_paused > Duration::from_millis(0) {
+                    self.paused = time_paused.checked_sub(timer::delta(ctx));
+                } else {
+                    self.paused = None;
+                }
+
+                return;
+            }
+            None => (),
+        }
+
+        // if let Some(self.paused) {
+        //     if (self.time_paused) < Duration::from_millis(1000) {
+        //         self.time_paused = self.time_paused + timer::delta(ctx);
+        //     } else {
+        //         self.time_paused = Duration::from_millis(0);
+        //         self.paused = false;
+        //     }
+
+        //     return;
+        // }
+
         for i in 0..self.paddles.len() {
             let distance = self.paddles[i].dy as f64 * time;
 
@@ -116,6 +144,11 @@ impl GameState {
             self.ball.dx = -self.ball.dx;
 
             self.play_sound(SoundType::Goal);
+
+            self.ball.x = self.game_width / 2.0;
+            self.ball.y = self.game_height / 2.0;
+
+            self.paused = Some(Duration::from_millis(1000));
         }
 
         // If ball collides with bottom or top wall
@@ -226,7 +259,7 @@ impl EventHandler for GameState {
                 self.dt
             };
 
-            self.simulate(delta_time * self.time_scale);
+            self.simulate(ctx, delta_time * self.time_scale);
 
             frame_time -= delta_time;
         }
