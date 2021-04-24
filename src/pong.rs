@@ -85,17 +85,6 @@ impl GameState {
             None => (),
         }
 
-        // if let Some(self.paused) {
-        //     if (self.time_paused) < Duration::from_millis(1000) {
-        //         self.time_paused = self.time_paused + timer::delta(ctx);
-        //     } else {
-        //         self.time_paused = Duration::from_millis(0);
-        //         self.paused = false;
-        //     }
-
-        //     return;
-        // }
-
         for i in 0..self.paddles.len() {
             let distance = self.paddles[i].dy as f64 * time;
 
