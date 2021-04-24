@@ -74,11 +74,7 @@ impl GameState {
     pub fn simulate(&mut self, ctx: &mut Context, time: f64) {
         match self.paused {
             Some(time_paused) => {
-                if time_paused > Duration::from_millis(0) {
-                    self.paused = time_paused.checked_sub(timer::delta(ctx));
-                } else {
-                    self.paused = None;
-                }
+                self.paused = time_paused.checked_sub(timer::delta(ctx));
 
                 return;
             }
