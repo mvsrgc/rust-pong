@@ -139,7 +139,7 @@ impl GameState {
 
             self.reset_game(false);
 
-            self.paused = Some(Duration::from_millis(1000));
+            self.paused = Some(Duration::from_millis(1200));
         }
 
         // If ball collides with bottom or top wall

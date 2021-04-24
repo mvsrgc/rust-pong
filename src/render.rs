@@ -5,6 +5,7 @@ use ggez::{
     timer, Context, GameResult,
 };
 use graphics::{Color, Drawable};
+use std::time::Duration;
 
 use crate::pong::GameState;
 
@@ -113,6 +114,31 @@ impl GameState {
             .dest(coords)
             .color(Color::from_rgba(255, 255, 255, 25));
         graphics::draw(ctx, &scoreboard_text, params)?;
+
+        match self.paused {
+            Some(time_paused) => {
+                let mut status_text_string = "READY";
+
+                if time_paused <= Duration::from_millis(500) {
+                    status_text_string = "START!";
+                }
+
+                let mut status_text = graphics::Text::new(status_text_string);
+                status_text.set_font(fancy_font.clone(), graphics::Scale::uniform(25.0));
+
+                let coords = [
+                    self.game_width / 2.0 - status_text.width(ctx) as f32 / 2.0,
+                    (self.game_height / 2.0 - status_text.height(ctx) as f32 / 2.0)
+                        + status_text.height(ctx) as f32 * 1.7 as f32,
+                ];
+
+                let params = graphics::DrawParam::default()
+                    .dest(coords)
+                    .color(Color::from_rgba(255, 255, 255, 25));
+                graphics::draw(ctx, &status_text, params)?;
+            }
+            None => (),
+        }
 
         graphics::present(ctx)
     }
