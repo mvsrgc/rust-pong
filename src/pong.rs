@@ -200,8 +200,7 @@ impl GameState {
     }
 
     pub fn reset_game(&mut self, reset_score: bool) {
-        self.ball.x = self.game_width / 2.0;
-        self.ball.y = self.game_height / 2.0;
+        self.ball = Ball::new(self.game_width, self.game_height);
 
         for i in 0..self.paddles.len() {
             self.paddles[i] = Paddle::new(self.game_width, self.game_height, self.paddles[i].side);
