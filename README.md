@@ -61,7 +61,7 @@ To get a local copy up and running follow these simple steps.
 ### Prerequisites
 
 You need the Rust programming language and compiler, I recommend installing it with rustup:
-* [Rust](https://rustup.rs/)
+* [Rustup](https://rustup.rs/)
 
 ### Installation
 
