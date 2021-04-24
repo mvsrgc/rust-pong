@@ -1,10 +1,10 @@
 use ggez::{
-    graphics::{self, DrawMode, DrawParam, Scale},
-    graphics::{Font, Text},
+    graphics::Font,
+    graphics::{self, DrawMode, DrawParam},
     nalgebra::Point2,
     timer, Context, GameResult,
 };
-use graphics::{Color, Drawable};
+use graphics::Color;
 use std::time::Duration;
 
 use crate::pong::GameState;
@@ -43,8 +43,8 @@ impl GameState {
     pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, graphics::BLACK);
 
+        // Draw debug mode information like FPS, mouse coordinates, time scale.
         if self.debug_mode {
-            // Draw debug mode information like FPS, mouse coordinates, time scale.
             let fps_display = graphics::Text::new(format!("FPS: {}", timer::fps(ctx)));
             let mouse_display =
                 graphics::Text::new(format!("Mouse: ({}, {})", self.mouse_x, self.mouse_y));
@@ -63,7 +63,7 @@ impl GameState {
             graphics::draw(ctx, &dt_display, (Point2::new(0.0, 40.0), graphics::WHITE))?;
         }
 
-        let mut paddle_rectangles = vec![];
+        // Draw the paddles
         for i in 0..self.paddles.len() {
             let paddle_rect = build_rectangle(
                 ctx,
@@ -73,23 +73,17 @@ impl GameState {
                 self.paddles[i].rect.h,
             )?;
 
-            paddle_rectangles.push(paddle_rect);
+            graphics::draw(ctx, &paddle_rect, DrawParam::default())?;
         }
 
-        // @Cleanup Maybe have a vec that holds all the items in the game and then loop
-        // on that vec and call draw() on everything ?
+        // Draw the ball
         let ball = build_circle(ctx, self.ball.x, self.ball.y, self.ball.radius)?;
-
-        for i in 0..self.paddles.len() {
-            graphics::draw(ctx, &paddle_rectangles[i], DrawParam::default())?;
-        }
-
-        // Draw ball
         graphics::draw(ctx, &ball, DrawParam::default())?;
 
         // Draw UI text
         let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;
 
+        // Game title
         let mut game_title_text = graphics::Text::new("PONG");
         game_title_text.set_font(fancy_font.clone(), graphics::Scale::uniform(80.0));
 
@@ -101,6 +95,7 @@ impl GameState {
         let params = graphics::DrawParam::default().dest(coords);
         graphics::draw(ctx, &game_title_text, params)?;
 
+        // Scores
         let mut scoreboard_text =
             graphics::Text::new(format!("{} \t {}", self.player1_score, self.player2_score));
         scoreboard_text.set_font(fancy_font.clone(), graphics::Scale::uniform(80.0));
@@ -115,6 +110,7 @@ impl GameState {
             .color(Color::from_rgba(255, 255, 255, 25));
         graphics::draw(ctx, &scoreboard_text, params)?;
 
+        // Draw READY then draw START! when the game is reset
         match self.paused {
             Some(time_paused) => {
                 let mut status_text_string = "READY";

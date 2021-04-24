@@ -48,13 +48,15 @@ pub struct GameState {
 
 impl GameState {
     pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> GameState {
-        let time_scale: f64 = DEFAULT_TIME_SCALE;
+        let time_scale: f64 = DEFAULT_TIME_SCALE; // You can slow down or speed up time in debug mode
 
+        // Create the paddles
         let left_paddle = Paddle::new(game_width, game_height, Side::Left);
         let right_paddle = Paddle::new(game_width, game_height, Side::Right);
 
         let paddles = vec![left_paddle, right_paddle];
 
+        // Initialize the state
         GameState {
             clicks: 0,
             mouse_x: 0.0,
@@ -77,6 +79,7 @@ impl GameState {
     }
 
     pub fn simulate(&mut self, ctx: &mut Context, time: f64) {
+        // If the game is paused, then we don't want to simulate.
         match self.paused {
             Some(time_paused) => {
                 self.paused = time_paused.checked_sub(timer::delta(ctx));
@@ -86,6 +89,7 @@ impl GameState {
             None => (),
         }
 
+        // Update poaddle positions and check paddle collisions.
         for i in 0..self.paddles.len() {
             let distance = self.paddles[i].dy as f64 * time;
 
@@ -100,6 +104,7 @@ impl GameState {
                 direction_value = 0.0;
             }
 
+            // Update paddle position
             self.paddles[i].rect.y = self.paddles[i].rect.y - (distance as f32 * direction_value);
 
             // Paddle collides with top wall
@@ -163,7 +168,6 @@ impl GameState {
 
         // If ball collides with paddles
         for i in 0..self.paddles.len() {
-            //@Cleanup add this to ball struct
             let ball_rect = Rect::new(
                 self.ball.x - self.ball.radius,
                 self.ball.y - self.ball.radius,
@@ -171,6 +175,7 @@ impl GameState {
                 self.ball.radius * 2.0,
             );
 
+            // If the ball collides with a paddle
             if ball_rect.overlaps(&self.paddles[i].rect) {
                 match self.paddles[i].side {
                     Side::Left => {
