@@ -9,7 +9,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="pong.gif" alt="Logo" width="640" height="480">
+    <img src="pong.mp4" alt="Logo" width="640" height="480">
   </a>
 
   <h3 align="center">Pong Game with Rust</h3>
