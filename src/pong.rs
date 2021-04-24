@@ -14,6 +14,7 @@ use crate::{ball::Ball, paddle::Paddle};
 
 pub const DEFAULT_TIME_SCALE: f64 = 1.0;
 
+#[derive(Clone, Copy)]
 pub enum Side {
     Left,
     Right,
@@ -136,8 +137,7 @@ impl GameState {
 
             self.play_sound(SoundType::Goal);
 
-            self.ball.x = self.game_width / 2.0;
-            self.ball.y = self.game_height / 2.0;
+            self.reset_game(false);
 
             self.paused = Some(Duration::from_millis(1000));
         }
@@ -196,6 +196,20 @@ impl GameState {
                 SoundType::Pad => self.pad_sound.play_detached().unwrap(),
                 SoundType::Wall => self.wall_sound.play_detached().unwrap(),
             }
+        }
+    }
+
+    pub fn reset_game(&mut self, reset_score: bool) {
+        self.ball.x = self.game_width / 2.0;
+        self.ball.y = self.game_height / 2.0;
+
+        for i in 0..self.paddles.len() {
+            self.paddles[i] = Paddle::new(self.game_width, self.game_height, self.paddles[i].side);
+        }
+
+        if reset_score {
+            self.player1_score = 0;
+            self.player2_score = 0;
         }
     }
 }
