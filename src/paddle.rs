@@ -1,6 +1,6 @@
 use ggez::graphics::Rect;
 
-use crate::pong::{Direction, Side};
+use crate::pong::Side;
 
 const PADDLE_WIDTH: f32 = 12.0;
 const PADDLE_HEIGHT: f32 = 75.0;
@@ -10,7 +10,8 @@ pub struct Paddle {
     pub rect: Rect,
     pub side: Side,
     pub dy: f32,
-    pub direction: Direction,
+    pub is_up_holding: bool,
+    pub is_down_holding: bool,
 }
 
 impl Paddle {
@@ -28,7 +29,8 @@ impl Paddle {
             rect: Rect::new(x, y, w, h),
             side,
             dy: PADDLE_SPEED,
-            direction: Direction::None,
+            is_up_holding: false,
+            is_down_holding: false,
         }
     }
 }

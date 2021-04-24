@@ -3,7 +3,7 @@ use rand::thread_rng;
 
 // Has a lot in common with Ball...
 const BALL_RADIUS: f32 = 8.0;
-const BALL_SPEED: f32 = 450.0;
+const BALL_SPEED: f32 = 300.0;
 pub struct Ball {
     pub x: f32,
     pub y: f32,

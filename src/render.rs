@@ -96,7 +96,6 @@ impl GameState {
         let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;
 
         let mut text = Text::new("PONG");
-
         text.set_font(fancy_font.clone(), Scale::uniform(80.0))
             .set_bounds(
                 Point2::new(self.game_width, f32::INFINITY),

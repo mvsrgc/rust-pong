@@ -17,12 +17,6 @@ pub enum Side {
     Right,
 }
 
-pub enum Direction {
-    Up,
-    Down,
-    None,
-}
-
 pub enum SoundType {
     Goal,
     Pad,
@@ -77,11 +71,16 @@ impl GameState {
         for i in 0..self.paddles.len() {
             let distance = self.paddles[i].dy as f64 * time;
 
-            let direction_value = match self.paddles[i].direction {
-                Direction::Up => 1.0,
-                Direction::Down => -1.0,
-                Direction::None => 0.0,
-            };
+            let direction_value;
+            if self.paddles[i].is_up_holding && self.paddles[i].is_down_holding {
+                direction_value = 0.0;
+            } else if self.paddles[i].is_up_holding {
+                direction_value = 1.0;
+            } else if self.paddles[i].is_down_holding {
+                direction_value = -1.0;
+            } else {
+                direction_value = 0.0;
+            }
 
             self.paddles[i].rect.y = self.paddles[i].rect.y - (distance as f32 * direction_value);
 
@@ -255,5 +254,9 @@ impl EventHandler for GameState {
         repeat: bool,
     ) {
         self.key_down_event(ctx, keycode, keymod, repeat);
+    }
+
+    fn key_up_event(&mut self, ctx: &mut Context, keycode: KeyCode, keymods: KeyMods) {
+        self.key_up_event(ctx, keycode, keymods);
     }
 }
