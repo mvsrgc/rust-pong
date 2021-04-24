@@ -60,7 +60,7 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+You need the Rust programming language and compiler, I recommend installing it with rustup:
 * [Rust](https://rustup.rs/)
 
 ### Installation
