@@ -41,6 +41,8 @@ pub struct GameState {
     pub wall_sound: audio::Source,
     pub play_sounds: bool,
     pub paused: Option<Duration>,
+    pub player1_score: usize,
+    pub player2_score: usize,
 }
 
 impl GameState {
@@ -68,6 +70,8 @@ impl GameState {
             wall_sound: audio::Source::new(ctx, "/wall.wav").unwrap(),
             play_sounds: false,
             paused: None,
+            player1_score: 0,
+            player2_score: 0,
         }
     }
 
@@ -119,11 +123,13 @@ impl GameState {
             // Left wall
             if self.ball.x - self.ball.radius <= 0.0 {
                 self.ball.x = 0.0 + self.ball.radius;
+                self.player2_score = self.player2_score + 1;
             }
 
             // Right wall
             if self.ball.x + self.ball.radius >= self.game_width {
                 self.ball.x = self.game_width - self.ball.radius;
+                self.player1_score = self.player1_score + 1;
             }
 
             self.ball.dx = -self.ball.dx;
@@ -157,17 +163,15 @@ impl GameState {
 
         // If ball collides with paddles
         for i in 0..self.paddles.len() {
-            if Self::check_collision(
-                Rect::new(
-                    self.ball.x - self.ball.radius,
-                    self.ball.y - self.ball.radius,
-                    self.ball.radius * 2.0,
-                    self.ball.radius * 2.0,
-                ),
-                self.paddles[i].rect,
-            ) {
-                self.play_sound(SoundType::Pad);
+            //@Cleanup add this to ball struct
+            let ball_rect = Rect::new(
+                self.ball.x - self.ball.radius,
+                self.ball.y - self.ball.radius,
+                self.ball.radius * 2.0,
+                self.ball.radius * 2.0,
+            );
 
+            if ball_rect.overlaps(&self.paddles[i].rect) {
                 match self.paddles[i].side {
                     Side::Left => {
                         self.ball.x =
@@ -181,44 +185,6 @@ impl GameState {
                 self.ball.dx = -self.ball.dx;
             }
         }
-    }
-
-    pub fn check_collision(a: Rect, b: Rect) -> bool {
-        // Sides
-        let (left_a, left_b): (f32, f32);
-        let (right_a, right_b): (f32, f32);
-        let (top_a, top_b): (f32, f32);
-        let (bottom_a, bottom_b): (f32, f32);
-
-        left_a = a.x;
-        right_a = a.x + a.w;
-
-        top_a = a.y;
-        bottom_a = a.y + a.h;
-
-        left_b = b.x;
-        right_b = b.x + b.w;
-
-        top_b = b.y;
-        bottom_b = b.y + b.h;
-
-        if bottom_a <= top_b {
-            return false;
-        }
-
-        if top_a >= bottom_b {
-            return false;
-        }
-
-        if right_a <= left_b {
-            return false;
-        }
-
-        if left_a >= right_b {
-            return false;
-        }
-
-        true
     }
 
     pub fn play_sound(&mut self, sound_type: SoundType) {

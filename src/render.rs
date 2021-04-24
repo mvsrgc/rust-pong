@@ -80,11 +80,7 @@ impl GameState {
         let ball = build_circle(ctx, self.ball.x, self.ball.y, self.ball.radius)?;
 
         for i in 0..self.paddles.len() {
-            graphics::draw(
-                ctx,
-                &paddle_rectangles[i],
-                DrawParam::default().color(Color::from_rgba(255, 255, 255, 50)),
-            )?;
+            graphics::draw(ctx, &paddle_rectangles[i], DrawParam::default())?;
         }
 
         // Draw ball
@@ -92,17 +88,20 @@ impl GameState {
 
         // Draw UI text
         let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;
-        let mut game_title = Text::new("PONG");
-        game_title
-            .set_font(fancy_font.clone(), Scale::uniform(80.0))
-            .set_bounds(
-                Point2::new(self.game_width, f32::INFINITY),
-                graphics::Align::Center,
-            );
 
-        graphics::draw(ctx, &game_title, DrawParam::default())?;
+        let mut game_title_text = graphics::Text::new("PONG");
+        game_title_text.set_font(fancy_font.clone(), graphics::Scale::uniform(80.0));
 
-        let mut scoreboard_text = graphics::Text::new(format!("{} {}", 0, 0));
+        let coords = [
+            self.game_width / 2.0 - game_title_text.width(ctx) as f32 / 2.0,
+            10.0,
+        ];
+
+        let params = graphics::DrawParam::default().dest(coords);
+        graphics::draw(ctx, &game_title_text, params)?;
+
+        let mut scoreboard_text =
+            graphics::Text::new(format!("{} \t {}", self.player1_score, self.player2_score));
         scoreboard_text.set_font(fancy_font.clone(), graphics::Scale::uniform(80.0));
 
         let coords = [
@@ -110,8 +109,10 @@ impl GameState {
             self.game_height / 2.0 - scoreboard_text.height(ctx) as f32 / 2.0,
         ];
 
-        let params = graphics::DrawParam::default().dest(coords);
-        graphics::draw(ctx, &scoreboard_text, params).expect("error drawing scoreboard text");
+        let params = graphics::DrawParam::default()
+            .dest(coords)
+            .color(Color::from_rgba(255, 255, 255, 25));
+        graphics::draw(ctx, &scoreboard_text, params)?;
 
         graphics::present(ctx)
     }

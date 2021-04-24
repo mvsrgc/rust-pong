@@ -21,7 +21,7 @@ impl Ball {
         let direction_die = Uniform::new_inclusive(0, directions.len() - 1);
 
         Ball {
-            x: game_width / 2.0 - 1.0,
+            x: game_width / 2.0,
             y: game_height / 2.0,
             radius: BALL_RADIUS,
             dx: BALL_SPEED * directions[direction_die.sample(&mut rng)] as f32,
