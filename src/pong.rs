@@ -183,6 +183,8 @@ impl GameState {
                 }
 
                 self.ball.dx = -self.ball.dx;
+
+                self.play_sound(SoundType::Pad);
             }
         }
     }

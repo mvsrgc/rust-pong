@@ -8,8 +8,8 @@ pub mod render;
 
 use crate::pong::GameState;
 
-const GAME_WIDTH: f32 = 640.0;
-const GAME_HEIGHT: f32 = 480.0;
+const GAME_WIDTH: f32 = 1280.0;
+const GAME_HEIGHT: f32 = 720.0;
 
 fn main() -> GameResult {
     let resource_dir = std::path::PathBuf::from("./resources");
