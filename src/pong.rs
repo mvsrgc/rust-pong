@@ -27,7 +27,6 @@ pub enum SoundType {
 }
 
 pub struct GameState {
-    pub clicks: usize,
     pub mouse_x: f32,
     pub mouse_y: f32,
     pub dt: f64,
@@ -48,7 +47,7 @@ pub struct GameState {
 
 impl GameState {
     pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> GameState {
-        let time_scale: f64 = DEFAULT_TIME_SCALE; // You can slow down or speed up time in debug mode
+        let time_scale: f64 = DEFAULT_TIME_SCALE; // You can slow down or speed up time with PgUP, PgDown
 
         // Create the paddles
         let left_paddle = Paddle::new(game_width, game_height, Side::Left);
@@ -58,7 +57,6 @@ impl GameState {
 
         // Initialize the state
         GameState {
-            clicks: 0,
             mouse_x: 0.0,
             mouse_y: 0.0,
             time_scale,
@@ -240,14 +238,6 @@ impl EventHandler for GameState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         self.draw(ctx)
-    }
-
-    fn mouse_button_up_event(&mut self, ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
-        self.mouse_button_up_event(ctx, button, x, y);
-    }
-
-    fn mouse_motion_event(&mut self, ctx: &mut Context, x: f32, y: f32, dx: f32, dy: f32) {
-        self.mouse_motion_event(ctx, x, y, dx, dy);
     }
 
     fn key_down_event(

@@ -46,8 +46,6 @@ impl GameState {
         // Draw debug mode information like FPS, mouse coordinates, time scale.
         if self.debug_mode {
             let fps_display = graphics::Text::new(format!("FPS: {}", timer::fps(ctx)));
-            let mouse_display =
-                graphics::Text::new(format!("Mouse: ({}, {})", self.mouse_x, self.mouse_y));
             let dt_display = graphics::Text::new(format!(
                 "Dt: {} - Scale: {}",
                 self.dt * self.time_scale,
@@ -55,11 +53,6 @@ impl GameState {
             ));
 
             graphics::draw(ctx, &fps_display, (Point2::new(0.0, 0.0), graphics::WHITE))?;
-            graphics::draw(
-                ctx,
-                &mouse_display,
-                (Point2::new(0.0, 20.0), graphics::WHITE),
-            )?;
             graphics::draw(ctx, &dt_display, (Point2::new(0.0, 40.0), graphics::WHITE))?;
         }
 
