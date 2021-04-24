@@ -6,7 +6,6 @@ use ggez::{
     event::EventHandler,
     graphics::Rect,
     input::keyboard::{KeyCode, KeyMods},
-    input::mouse::MouseButton,
     timer, Context, GameResult,
 };
 
@@ -18,12 +17,25 @@ pub const DEFAULT_TIME_SCALE: f64 = 1.0;
 pub enum Side {
     Left,
     Right,
+    Top,
+    Bottom,
 }
 
 pub enum SoundType {
     Goal,
     Pad,
     Wall,
+}
+
+pub struct Wall {
+    rect: Rect,
+    side: Side,
+}
+
+impl Wall {
+    pub fn new(rect: Rect, side: Side) -> Wall {
+        Wall { rect, side }
+    }
 }
 
 pub struct GameState {
@@ -43,6 +55,7 @@ pub struct GameState {
     pub paused: Option<Duration>,
     pub player1_score: usize,
     pub player2_score: usize,
+    pub walls: Vec<Wall>,
 }
 
 impl GameState {
@@ -54,6 +67,13 @@ impl GameState {
         let right_paddle = Paddle::new(game_width, game_height, Side::Right);
 
         let paddles = vec![left_paddle, right_paddle];
+
+        let walls = vec![
+            Wall::new(Rect::new(0.0, 0.0, game_width, 0.0), Side::Top),
+            Wall::new(Rect::new(0.0, 0.0, 0.0, game_height), Side::Left),
+            Wall::new(Rect::new(game_width, 0.0, 0.0, game_height), Side::Right),
+            Wall::new(Rect::new(0.0, game_height, game_width, 0.0), Side::Bottom),
+        ];
 
         // Initialize the state
         GameState {
@@ -73,6 +93,7 @@ impl GameState {
             paused: None,
             player1_score: 0,
             player2_score: 0,
+            walls,
         }
     }
 
@@ -120,60 +141,75 @@ impl GameState {
         self.ball.x = (self.ball.x as f64 + (self.ball.dx as f64 * time)) as f32;
         self.ball.y = (self.ball.y as f64 + (self.ball.dy as f64 * time)) as f32;
 
-        // If ball collides with left or right wall
-        if self.ball.x - self.ball.radius <= 0.0
-            || self.ball.x + self.ball.radius >= self.game_width
-        {
-            // Left wall
-            if self.ball.x - self.ball.radius <= 0.0 {
-                self.ball.x = 0.0 + self.ball.radius;
-                self.player2_score = self.player2_score + 1;
+        let ball_rect = Rect::new(
+            self.ball.x - self.ball.radius,
+            self.ball.y - self.ball.radius,
+            self.ball.radius * 2.0,
+            self.ball.radius * 2.0,
+        );
+
+        // Check if ball collides with any walls
+        for i in 0..self.walls.len() {
+            if !ball_rect.overlaps(&self.walls[i].rect) {
+                continue;
             }
 
-            // Right wall
-            if self.ball.x + self.ball.radius >= self.game_width {
-                self.ball.x = self.game_width - self.ball.radius;
-                self.player1_score = self.player1_score + 1;
+            match self.walls[i].side {
+                Side::Left => {
+                    // Left wall
+                    if self.ball.x - self.ball.radius <= 0.0 {
+                        self.ball.x = 0.0 + self.ball.radius;
+                        self.player2_score = self.player2_score + 1;
+                    }
+
+                    self.ball.dx = -self.ball.dx;
+
+                    self.play_sound(SoundType::Goal);
+
+                    self.reset_game(false);
+
+                    self.paused = Some(Duration::from_millis(1200));
+                }
+                Side::Right => {
+                    // Right wall
+                    if self.ball.x + self.ball.radius >= self.game_width {
+                        self.ball.x = self.game_width - self.ball.radius;
+                        self.player1_score = self.player1_score + 1;
+                    }
+
+                    self.ball.dx = -self.ball.dx;
+
+                    self.play_sound(SoundType::Goal);
+
+                    self.reset_game(false);
+
+                    self.paused = Some(Duration::from_millis(1200));
+                }
+                Side::Top => {
+                    // Top wall
+                    if self.ball.y - self.ball.radius <= 0.0 {
+                        self.ball.y = 0.0 + self.ball.radius;
+                    }
+
+                    self.ball.dy = -self.ball.dy;
+
+                    self.play_sound(SoundType::Wall)
+                }
+                Side::Bottom => {
+                    // Bottom wall
+                    if self.ball.y + self.ball.radius >= self.game_height {
+                        self.ball.y = self.game_height - self.ball.radius;
+                    }
+
+                    self.ball.dy = -self.ball.dy;
+
+                    self.play_sound(SoundType::Wall);
+                }
             }
-
-            self.ball.dx = -self.ball.dx;
-
-            self.play_sound(SoundType::Goal);
-
-            self.reset_game(false);
-
-            self.paused = Some(Duration::from_millis(1200));
-        }
-
-        // If ball collides with bottom or top wall
-        if self.ball.y - self.ball.radius <= 0.0
-            || self.ball.y + self.ball.radius >= self.game_height
-        {
-            // Top wall
-            if self.ball.y - self.ball.radius <= 0.0 {
-                self.ball.y = 0.0 + self.ball.radius;
-            }
-
-            // Bottom wall
-            if self.ball.y + self.ball.radius >= self.game_height {
-                self.ball.y = self.game_height - self.ball.radius;
-            }
-
-            self.ball.dy = -self.ball.dy;
-
-            self.play_sound(SoundType::Wall);
         }
 
         // If ball collides with paddles
         for i in 0..self.paddles.len() {
-            let ball_rect = Rect::new(
-                self.ball.x - self.ball.radius,
-                self.ball.y - self.ball.radius,
-                self.ball.radius * 2.0,
-                self.ball.radius * 2.0,
-            );
-
-            // If the ball collides with a paddle
             if ball_rect.overlaps(&self.paddles[i].rect) {
                 match self.paddles[i].side {
                     Side::Left => {
@@ -183,6 +219,7 @@ impl GameState {
                     Side::Right => {
                         self.ball.x = self.paddles[i].rect.x - self.ball.radius;
                     }
+                    _ => {}
                 }
 
                 self.ball.dx = -self.ball.dx;

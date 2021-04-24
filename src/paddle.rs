@@ -19,6 +19,7 @@ impl Paddle {
         let x = match side {
             Side::Left => 0.0,
             Side::Right => game_width - PADDLE_WIDTH,
+            _ => panic!("Paddles go on the left or right walls."),
         };
 
         let y = (game_height - PADDLE_HEIGHT) / 2.0;
