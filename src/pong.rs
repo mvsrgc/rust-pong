@@ -65,7 +65,7 @@ impl GameState {
             // Update paddle position
             self.paddles[i].rect.y = self.paddles[i].rect.y - (distance as f32 * direction_value);
 
-            // Paddle collides with top or  wall
+            // Paddle collides with top or bottom wall
             for j in 0..self.walls.len() {
                 if !self.paddles[i].rect.overlaps(&self.walls[j].rect) {
                     continue;
