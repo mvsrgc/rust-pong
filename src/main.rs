@@ -4,6 +4,7 @@ pub mod ball;
 pub mod game_state;
 pub mod menu;
 pub mod paddle;
+pub mod particle;
 pub mod player_control;
 pub mod pong;
 pub mod render;

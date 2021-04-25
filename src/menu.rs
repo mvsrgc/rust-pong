@@ -1,9 +1,10 @@
 enum MenuChoices {
     Resume = 0,
     ToggleSounds = 1,
-    Quit = 2,
-    ResetGame = 3,
-    ItemsTotal = 4,
+    ToggleParticles = 2,
+    Quit = 3,
+    ResetGame = 4,
+    ItemsTotal = 5,
 }
 
 impl MenuChoices {

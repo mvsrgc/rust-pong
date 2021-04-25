@@ -1,8 +1,12 @@
 use std::time::Duration;
 
-use crate::{ball::Ball, paddle::Paddle, pong::Wall};
+use crate::{ball::Ball, paddle::Paddle, particle::Particle, pong::Wall};
 
-use ggez::{audio, graphics::Rect, Context};
+use ggez::{
+    audio,
+    graphics::{Image, Rect},
+    Context,
+};
 
 use crate::pong::Side;
 
@@ -21,6 +25,7 @@ pub struct GameState {
     pub mouse_y: f32,
     pub debug_mode: bool,
     pub play_sounds: bool,
+    pub show_particles: bool,
     pub game_width: f32,
     pub game_height: f32,
     pub game_mode: GameMode,
@@ -33,6 +38,8 @@ pub struct GameState {
     pub goal_sound: audio::Source,
     pub pad_sound: audio::Source,
     pub wall_sound: audio::Source,
+    pub particle_images: Vec<Image>,
+    pub particles: Vec<Particle>,
     pub menu: Menu,
 }
 
@@ -53,13 +60,26 @@ impl GameState {
 
         let dt = 1.0 / 60.0;
 
-        let ball = Ball::new(game_width, game_height);
-
+        // @Error - We should handle errors here instead of .unwrap()
         let goal_sound = audio::Source::new(ctx, "/goal.wav").unwrap();
         let pad_sound = audio::Source::new(ctx, "/pad.wav").unwrap();
         let wall_sound = audio::Source::new(ctx, "/wall.wav").unwrap();
 
+        let ball = Ball::new(ctx, game_width, game_height);
+
         let menu = Menu::new(0);
+
+        // @Error - We should handle errors here instead of .unwrap()
+        let mut particles = vec![];
+        let particle_images = vec![
+            Image::new(ctx, "/blue.bmp").unwrap(),
+            Image::new(ctx, "/red.bmp").unwrap(),
+            Image::new(ctx, "/green.bmp").unwrap(),
+        ];
+        for i in 0..10 {
+            let particle = Particle::new(ball.x, ball.y, particle_images.clone());
+            particles.push(particle);
+        }
 
         // Initialize the state
         GameState {
@@ -68,6 +88,7 @@ impl GameState {
             mouse_y: 0.0,
             debug_mode: false,
             play_sounds: true,
+            show_particles: true,
             game_width,
             game_height,
             game_mode: GameMode::Game,
@@ -80,6 +101,8 @@ impl GameState {
             goal_sound,
             pad_sound,
             wall_sound,
+            particle_images,
+            particles,
             menu,
         }
     }
@@ -94,6 +117,12 @@ impl GameState {
                 self.menu = Menu::new(self.menu.current_menu_choice);
                 self.game_mode = GameMode::Game;
             }
+        }
+    }
+
+    pub fn stop_particles(&mut self) {
+        for i in 0..self.particles.len() {
+            self.particles[i].is_dead = true;
         }
     }
 }

@@ -8,6 +8,7 @@ use graphics::Color;
 use std::time::Duration;
 
 use crate::game_state::{GameMode, GameState};
+use crate::particle::Particle;
 
 fn get_text_width(ctx: &mut Context, text: &str, font: Font, scale: f32) -> u32 {
     let mut text = graphics::Text::new(text);
@@ -117,6 +118,31 @@ impl GameState {
         let ball = build_circle(ctx, self.ball.x, self.ball.y, self.ball.radius)?;
         graphics::draw(ctx, &ball, DrawParam::default())?;
 
+        // Draw ball particles
+        if self.show_particles {
+            for i in 0..self.particles.len() {
+                if self.particles[i].is_dead {
+                    self.particles[i] =
+                        Particle::new(self.ball.x, self.ball.y, self.particle_images.clone());
+                }
+
+                self.particles[i].frame = self.particles[i].frame + 1;
+
+                if self.particles[i].frame > 15 {
+                    self.particles[i].is_dead = true;
+                }
+
+                if let Some(image) = &self.particles[i].surface {
+                    graphics::draw(
+                        ctx,
+                        image,
+                        DrawParam::new()
+                            .dest(Point2::new(self.particles[i].x, self.particles[i].y)),
+                    )?;
+                }
+            }
+        }
+
         // Draw UI text
         let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;
 
@@ -196,7 +222,18 @@ impl GameState {
             false => "Sounds OFF",
         };
 
-        let menu_items = vec!["Resume", sound_toggle_text, "Restart", "Quit"];
+        let particles_toggle_text = match self.show_particles {
+            true => "Particles ON",
+            false => "Particles OFF",
+        };
+
+        let menu_items = vec![
+            "Resume",
+            sound_toggle_text,
+            particles_toggle_text,
+            "Restart",
+            "Quit",
+        ];
 
         for i in 0..menu_items.len() {
             let mut color = Color::from_rgba(255, 255, 255, 25);

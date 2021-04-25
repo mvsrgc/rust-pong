@@ -37,10 +37,14 @@ impl GameState {
                     0 => self.toggle_menu(),
                     1 => self.play_sounds = !self.play_sounds,
                     2 => {
-                        self.reset_game(true);
+                        self.show_particles = !self.show_particles;
+                        self.stop_particles();
+                    }
+                    3 => {
+                        self.reset_game(ctx, true);
                         self.toggle_menu()
                     }
-                    3 => event::quit(ctx),
+                    4 => event::quit(ctx),
                     _ => (),
                 },
                 KeyCode::Escape => self.toggle_menu(),

@@ -1,3 +1,4 @@
+use ggez::Context;
 use rand::distributions::{Distribution, Uniform};
 use rand::thread_rng;
 
@@ -12,8 +13,11 @@ pub struct Ball {
 }
 
 impl Ball {
-    pub fn new(game_width: f32, game_height: f32) -> Ball {
+    pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> Ball {
         let mut rng = thread_rng();
+
+        let x = game_width / 2.0;
+        let y = game_height / 2.0;
 
         let directions = vec![1, -1];
 
@@ -23,8 +27,8 @@ impl Ball {
         let dy = BALL_SPEED * directions[direction_die.sample(&mut rng)] as f32;
 
         Ball {
-            x: game_width / 2.0,
-            y: game_height / 2.0,
+            x,
+            y,
             dx,
             dy,
             radius: BALL_RADIUS,

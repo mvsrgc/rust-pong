@@ -124,7 +124,7 @@ impl GameState {
 
                     self.play_sound(SoundType::Goal);
 
-                    self.reset_game(false);
+                    self.reset_game(ctx, false);
 
                     self.paused = Some(Duration::from_millis(1200));
                 }
@@ -137,7 +137,7 @@ impl GameState {
 
                     self.play_sound(SoundType::Goal);
 
-                    self.reset_game(false);
+                    self.reset_game(ctx, false);
 
                     self.paused = Some(Duration::from_millis(1200));
                 }
@@ -191,8 +191,8 @@ impl GameState {
         }
     }
 
-    pub fn reset_game(&mut self, reset_score: bool) {
-        self.ball = Ball::new(self.game_width, self.game_height);
+    pub fn reset_game(&mut self, ctx: &mut Context, reset_score: bool) {
+        self.ball = Ball::new(ctx, self.game_width, self.game_height);
 
         for i in 0..self.paddles.len() {
             self.paddles[i] = Paddle::new(self.game_width, self.game_height, self.paddles[i].side);
