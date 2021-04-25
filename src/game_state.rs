@@ -1,9 +1,10 @@
 use std::time::Duration;
 
+use crate::{ball::Ball, paddle::Paddle, pong::Wall};
+
 use ggez::{audio, graphics::Rect, Context};
 
 use crate::pong::Side;
-use crate::{ball::Ball, paddle::Paddle, pong::Wall};
 
 pub const DEFAULT_TIME_SCALE: f64 = 1.0;
 
