@@ -18,29 +18,22 @@ impl GameState {
         _keymod: KeyMods,
         _repeat: bool,
     ) {
-        match keycode {
-            KeyCode::F1 => self.debug_mode = !self.debug_mode,
-            KeyCode::F2 => self.play_sounds = !self.play_sounds,
-            KeyCode::Escape => self.toggle_menu(),
-            KeyCode::W => self.paddles[LEFT_PADDLE_INDEX].is_up_holding = true,
-            KeyCode::S => self.paddles[LEFT_PADDLE_INDEX].is_down_holding = true,
-            KeyCode::Up => match self.game_mode {
-                GameMode::Game => {
-                    self.paddles[RIGHT_PADDLE_INDEX].is_up_holding = true;
-                }
-                GameMode::Menu => {
-                    self.menu.advance_menu_choice(1);
-                }
+        match self.game_mode {
+            GameMode::Game => match keycode {
+                KeyCode::F1 => self.debug_mode = !self.debug_mode,
+                KeyCode::F2 => self.play_sounds = !self.play_sounds,
+                KeyCode::Escape => self.toggle_menu(),
+                KeyCode::W => self.paddles[LEFT_PADDLE_INDEX].is_up_holding = true,
+                KeyCode::S => self.paddles[LEFT_PADDLE_INDEX].is_down_holding = true,
+                KeyCode::Up => self.paddles[RIGHT_PADDLE_INDEX].is_up_holding = true,
+                KeyCode::Down => self.paddles[RIGHT_PADDLE_INDEX].is_down_holding = true,
+                _ => (),
             },
-            KeyCode::Down => match self.game_mode {
-                GameMode::Game => self.paddles[RIGHT_PADDLE_INDEX].is_down_holding = true,
-                GameMode::Menu => {
-                    self.menu.advance_menu_choice(-1);
-                }
-            },
-            KeyCode::Return => match self.game_mode {
-                GameMode::Game => (),
-                GameMode::Menu => match self.menu.current_menu_choice {
+
+            GameMode::Menu => match keycode {
+                KeyCode::Up => self.menu.advance_menu_choice(1),
+                KeyCode::Down => self.menu.advance_menu_choice(-1),
+                KeyCode::Return => match self.menu.current_menu_choice {
                     0 => self.toggle_menu(),
                     1 => self.play_sounds = !self.play_sounds,
                     2 => {
@@ -50,17 +43,21 @@ impl GameState {
                     3 => event::quit(ctx),
                     _ => (),
                 },
+                KeyCode::Escape => self.toggle_menu(),
+                _ => (),
             },
-            _ => (),
         }
     }
 
     pub fn key_up_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _keymods: KeyMods) {
-        match keycode {
-            KeyCode::W => self.paddles[LEFT_PADDLE_INDEX].is_up_holding = false,
-            KeyCode::S => self.paddles[LEFT_PADDLE_INDEX].is_down_holding = false,
-            KeyCode::Up => self.paddles[RIGHT_PADDLE_INDEX].is_up_holding = false,
-            KeyCode::Down => self.paddles[RIGHT_PADDLE_INDEX].is_down_holding = false,
+        match self.game_mode {
+            GameMode::Game => match keycode {
+                KeyCode::W => self.paddles[LEFT_PADDLE_INDEX].is_up_holding = false,
+                KeyCode::S => self.paddles[LEFT_PADDLE_INDEX].is_down_holding = false,
+                KeyCode::Up => self.paddles[RIGHT_PADDLE_INDEX].is_up_holding = false,
+                KeyCode::Down => self.paddles[RIGHT_PADDLE_INDEX].is_down_holding = false,
+                _ => (),
+            },
             _ => (),
         }
     }
