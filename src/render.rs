@@ -11,6 +11,37 @@ use crate::game_state::{GameMode, GameState};
 
 // width = get_string_width(font, text, effect)
 // draw_text(font, width / 2, etc...)
+fn get_text_width(ctx: &mut Context, text: &str, font: Font, scale: f32) -> u32 {
+    let mut text = graphics::Text::new(text);
+    text.set_font(font, Scale::uniform(scale));
+
+    text.width(ctx)
+}
+
+fn get_text_height(ctx: &mut Context, text: &str, font: Font, scale: f32) -> u32 {
+    let mut text = graphics::Text::new(text);
+    text.set_font(font, Scale::uniform(scale));
+
+    text.height(ctx)
+}
+
+fn draw_text(
+    ctx: &mut Context,
+    text: &str,
+    pos: Point2<f32>,
+    font: Font,
+    scale: f32,
+    color: Color,
+) -> GameResult<()> {
+    let mut text = graphics::Text::new(text);
+    text.set_font(font, graphics::Scale::uniform(scale));
+
+    let params = graphics::DrawParam::default().dest(pos).color(color);
+
+    graphics::draw(ctx, &text, params)?;
+
+    Ok(())
+}
 
 fn build_rectangle(
     ctx: &mut Context,
@@ -61,15 +92,27 @@ impl GameState {
     fn draw_game(&mut self, ctx: &mut Context) -> GameResult<()> {
         // Draw debug mode information like FPS, mouse coordinates, time scale.
         if self.debug_mode {
-            let fps_display = graphics::Text::new(format!("FPS: {}", timer::fps(ctx)));
-            let dt_display = graphics::Text::new(format!(
-                "Dt: {} - Scale: {}",
-                self.dt * self.time_scale,
-                self.time_scale,
-            ));
+            draw_text(
+                ctx,
+                &format!("FPS: {}", timer::fps(ctx)),
+                Point2::new(0.0, 0.0),
+                Font::default(),
+                20.0,
+                graphics::WHITE,
+            )?;
 
-            graphics::draw(ctx, &fps_display, (Point2::new(0.0, 0.0), graphics::WHITE))?;
-            graphics::draw(ctx, &dt_display, (Point2::new(0.0, 40.0), graphics::WHITE))?;
+            draw_text(
+                ctx,
+                &format!(
+                    "Dt: {} - Scale: {}",
+                    self.dt * self.time_scale,
+                    self.time_scale
+                ),
+                Point2::new(0.0, 25.0),
+                Font::default(),
+                20.0,
+                graphics::WHITE,
+            )?;
         }
 
         // Draw the paddles
@@ -93,31 +136,31 @@ impl GameState {
         let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;
 
         // Game title
-        let mut game_title_text = graphics::Text::new("PONG");
-        game_title_text.set_font(fancy_font.clone(), graphics::Scale::uniform(80.0));
-
-        let coords = [
-            self.game_width / 2.0 - game_title_text.width(ctx) as f32 / 2.0,
-            10.0,
-        ];
-
-        let params = graphics::DrawParam::default().dest(coords);
-        graphics::draw(ctx, &game_title_text, params)?;
+        let width = get_text_width(ctx, "PONG", fancy_font.clone(), 80.0);
+        draw_text(
+            ctx,
+            "PONG",
+            Point2::new(self.game_width / 2.0 - width as f32 / 2.0, 10.0),
+            fancy_font.clone(),
+            80.0,
+            graphics::WHITE,
+        )?;
 
         // Scores
-        let mut scoreboard_text =
-            graphics::Text::new(format!("{} \t {}", self.player1_score, self.player2_score));
-        scoreboard_text.set_font(fancy_font.clone(), graphics::Scale::uniform(80.0));
-
-        let coords = [
-            self.game_width / 2.0 - scoreboard_text.width(ctx) as f32 / 2.0,
-            self.game_height / 2.0 - scoreboard_text.height(ctx) as f32 / 2.0,
-        ];
-
-        let params = graphics::DrawParam::default()
-            .dest(coords)
-            .color(Color::from_rgba(255, 255, 255, 25));
-        graphics::draw(ctx, &scoreboard_text, params)?;
+        let score_text = &format!("{} \t {}", self.player1_score, self.player2_score);
+        let width = get_text_width(ctx, score_text, fancy_font.clone(), 80.0);
+        let height = get_text_height(ctx, score_text, fancy_font.clone(), 80.0);
+        draw_text(
+            ctx,
+            score_text,
+            Point2::new(
+                self.game_width / 2.0 - width as f32 / 2.0,
+                self.game_height / 2.0 - height as f32 / 2.0,
+            ),
+            fancy_font.clone(),
+            80.0,
+            Color::from_rgba(255, 255, 255, 25),
+        )?;
 
         // Draw READY then draw START! when the game is reset
         match self.paused {
@@ -128,19 +171,19 @@ impl GameState {
                     status_text_string = "START!";
                 }
 
-                let mut status_text = graphics::Text::new(status_text_string);
-                status_text.set_font(fancy_font.clone(), graphics::Scale::uniform(25.0));
-
-                let coords = [
-                    self.game_width / 2.0 - status_text.width(ctx) as f32 / 2.0,
-                    (self.game_height / 2.0 - status_text.height(ctx) as f32 / 2.0)
-                        + status_text.height(ctx) as f32 * 1.7 as f32,
-                ];
-
-                let params = graphics::DrawParam::default()
-                    .dest(coords)
-                    .color(Color::from_rgba(255, 255, 255, 25));
-                graphics::draw(ctx, &status_text, params)?;
+                let width = get_text_width(ctx, status_text_string, fancy_font.clone(), 25.0);
+                let height = get_text_height(ctx, status_text_string, fancy_font.clone(), 25.0);
+                draw_text(
+                    ctx,
+                    status_text_string,
+                    Point2::new(
+                        self.game_width / 2.0 - width as f32 / 2.0,
+                        (self.game_height / 2.0 - height as f32 / 2.0) + height as f32 * 1.7,
+                    ),
+                    fancy_font.clone(),
+                    25.0,
+                    Color::from_rgba(255, 255, 255, 25),
+                )?;
             }
             None => (),
         }
@@ -153,36 +196,39 @@ impl GameState {
         let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;
 
         // Game title
-        let mut game_title_text = graphics::Text::new("PONG");
-        game_title_text.set_font(fancy_font.clone(), graphics::Scale::uniform(80.0));
+        let width = get_text_width(ctx, "PONG", fancy_font.clone(), 80.0);
+        draw_text(
+            ctx,
+            "PONG",
+            Point2::new(self.game_width / 2.0 - width as f32 / 2.0, 10.0),
+            fancy_font.clone(),
+            80.0,
+            graphics::WHITE,
+        )?;
 
-        let coords = [
-            self.game_width / 2.0 - game_title_text.width(ctx) as f32 / 2.0,
-            10.0,
-        ];
-
-        let params = graphics::DrawParam::default().dest(coords);
-        graphics::draw(ctx, &game_title_text, params)?;
-
-        let menu_items = vec!["Resume", "Music", "Quit"];
+        let menu_items = vec!["Resume", "Sounds", "Quit"];
 
         for i in 0..menu_items.len() {
-            let mut menu_choice_text = graphics::Text::new(menu_items[i]);
-            menu_choice_text.set_font(fancy_font.clone(), graphics::Scale::uniform(60.0));
-
-            let coords = [
-                self.game_width / 2.0 - menu_choice_text.width(ctx) as f32 / 2.0,
-                self.game_height / 4.0 + ((menu_choice_text.height(ctx) + 10) * i as u32) as f32,
-            ];
-
             let mut color = Color::from_rgba(255, 255, 255, 25);
 
             if self.menu.current_menu_choice == i as isize {
                 color = Color::from_rgba(0, 51, 102, 255);
             }
 
-            let params = graphics::DrawParam::default().dest(coords).color(color);
-            graphics::draw(ctx, &menu_choice_text, params)?;
+            let width = get_text_width(ctx, menu_items[i], fancy_font.clone(), 60.0);
+            let height = get_text_height(ctx, menu_items[i], fancy_font.clone(), 60.0);
+
+            draw_text(
+                ctx,
+                menu_items[i],
+                Point2::new(
+                    self.game_width / 2.0 - width as f32 / 2.0,
+                    self.game_height / 3.0 + ((height + 10) * i as u32) as f32,
+                ),
+                fancy_font.clone(),
+                60.0,
+                color,
+            )?;
         }
 
         Ok(())

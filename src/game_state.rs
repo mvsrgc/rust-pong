@@ -62,6 +62,8 @@ impl GameState {
         let pad_sound = audio::Source::new(ctx, "/pad.wav").unwrap();
         let wall_sound = audio::Source::new(ctx, "/wall.wav").unwrap();
 
+        let menu = Menu::new();
+
         // Initialize the state
         GameState {
             dt,
@@ -82,7 +84,7 @@ impl GameState {
             goal_sound,
             pad_sound,
             wall_sound,
-            menu: Menu::new(),
+            menu,
         }
     }
 
