@@ -10,8 +10,6 @@ use ggez::{
 
 use crate::{ball::Ball, game_state::GameState, paddle::Paddle};
 
-pub const DEFAULT_TIME_SCALE: f64 = 1.0;
-
 #[derive(Clone, Copy)]
 pub enum Side {
     Left,

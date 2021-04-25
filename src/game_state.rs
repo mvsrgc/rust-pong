@@ -2,27 +2,29 @@ use std::time::Duration;
 
 use ggez::{audio, graphics::Rect, Context};
 
-use crate::pong::{Side, DEFAULT_TIME_SCALE};
+use crate::pong::Side;
 use crate::{ball::Ball, paddle::Paddle, pong::Wall};
 
+pub const DEFAULT_TIME_SCALE: f64 = 1.0;
+
 pub struct GameState {
+    pub dt: f64,
     pub mouse_x: f32,
     pub mouse_y: f32,
-    pub dt: f64,
-    pub time_scale: f64,
     pub debug_mode: bool,
-    pub paddles: Vec<Paddle>,
-    pub ball: Ball,
+    pub play_sounds: bool,
+    pub time_scale: f64,
     pub game_width: f32,
     pub game_height: f32,
-    pub goal_sound: audio::Source,
-    pub pad_sound: audio::Source,
-    pub wall_sound: audio::Source,
-    pub play_sounds: bool,
+    pub ball: Ball,
+    pub walls: Vec<Wall>,
+    pub paddles: Vec<Paddle>,
     pub paused: Option<Duration>,
     pub player1_score: usize,
     pub player2_score: usize,
-    pub walls: Vec<Wall>,
+    pub goal_sound: audio::Source,
+    pub pad_sound: audio::Source,
+    pub wall_sound: audio::Source,
 }
 
 impl GameState {
@@ -42,25 +44,33 @@ impl GameState {
             Wall::new(Rect::new(0.0, game_height, game_width, 0.0), Side::Bottom),
         ];
 
+        let dt = (1.0 / 60.0) * time_scale;
+
+        let ball = Ball::new(game_width, game_height);
+
+        let goal_sound = audio::Source::new(ctx, "/goal.wav").unwrap();
+        let pad_sound = audio::Source::new(ctx, "/pad.wav").unwrap();
+        let wall_sound = audio::Source::new(ctx, "/wall.wav").unwrap();
+
         // Initialize the state
         GameState {
+            dt,
             mouse_x: 0.0,
             mouse_y: 0.0,
-            time_scale,
-            dt: (1.0 / 60.0) * time_scale,
             debug_mode: false,
+            play_sounds: true,
+            time_scale,
             game_width,
             game_height,
+            ball,
+            walls,
             paddles,
-            ball: Ball::new(game_width, game_height),
-            goal_sound: audio::Source::new(ctx, "/goal.wav").unwrap(),
-            pad_sound: audio::Source::new(ctx, "/pad.wav").unwrap(),
-            wall_sound: audio::Source::new(ctx, "/wall.wav").unwrap(),
-            play_sounds: true,
             paused: None,
             player1_score: 0,
             player2_score: 0,
-            walls,
+            goal_sound,
+            pad_sound,
+            wall_sound,
         }
     }
 }
