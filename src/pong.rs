@@ -47,7 +47,7 @@ impl GameState {
             None => (),
         }
 
-        // Update poaddle positions and check paddle collisions.
+        // Update paddle positions and check paddle collisions.
         for i in 0..self.paddles.len() {
             let distance = self.paddles[i].dy as f64 * time;
 
