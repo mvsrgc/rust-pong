@@ -38,6 +38,15 @@ impl GameState {
                     self.menu.advance_menu_choice(-1);
                 }
             },
+            KeyCode::Return => match self.game_mode {
+                GameMode::Game => (),
+                GameMode::Menu => match self.menu.current_menu_choice {
+                    0 => self.toggle_menu(),
+                    1 => self.play_sounds = !self.play_sounds,
+                    2 => event::quit(ctx),
+                    _ => (),
+                },
+            },
             KeyCode::PageUp => self.time_scale *= 1.5,
             KeyCode::PageDown => self.time_scale /= 1.5,
             KeyCode::Home => self.time_scale = DEFAULT_TIME_SCALE,

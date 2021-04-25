@@ -9,8 +9,6 @@ use std::time::Duration;
 
 use crate::game_state::{GameMode, GameState};
 
-// width = get_string_width(font, text, effect)
-// draw_text(font, width / 2, etc...)
 fn get_text_width(ctx: &mut Context, text: &str, font: Font, scale: f32) -> u32 {
     let mut text = graphics::Text::new(text);
     text.set_font(font, Scale::uniform(scale));
@@ -206,7 +204,12 @@ impl GameState {
             graphics::WHITE,
         )?;
 
-        let menu_items = vec!["Resume", "Sounds", "Quit"];
+        let sound_toggle_text = match self.play_sounds {
+            true => "Sounds ON",
+            false => "Sounds OFF",
+        };
+
+        let menu_items = vec!["Resume", sound_toggle_text, "Quit"];
 
         for i in 0..menu_items.len() {
             let mut color = Color::from_rgba(255, 255, 255, 25);

@@ -10,9 +10,9 @@ pub struct Menu {
 }
 
 impl Menu {
-    pub fn new() -> Menu {
+    pub fn new(current_menu_choice: isize) -> Menu {
         Menu {
-            current_menu_choice: 0,
+            current_menu_choice,
         }
     }
 
@@ -26,5 +26,9 @@ impl Menu {
         if self.current_menu_choice >= MenuChoices::ItemsTotal as isize {
             self.current_menu_choice -= MenuChoices::ItemsTotal as isize;
         }
+    }
+
+    pub fn select_menu_choice(&self) {
+        let resume = MenuChoices::Resume as isize;
     }
 }

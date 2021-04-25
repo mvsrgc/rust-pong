@@ -62,7 +62,7 @@ impl GameState {
         let pad_sound = audio::Source::new(ctx, "/pad.wav").unwrap();
         let wall_sound = audio::Source::new(ctx, "/wall.wav").unwrap();
 
-        let menu = Menu::new();
+        let menu = Menu::new(0);
 
         // Initialize the state
         GameState {
@@ -91,11 +91,11 @@ impl GameState {
     pub fn toggle_menu(&mut self) {
         match self.game_mode {
             GameMode::Game => {
-                self.menu = Menu::new();
+                self.menu = Menu::new(self.menu.current_menu_choice);
                 self.game_mode = GameMode::Menu;
             }
             GameMode::Menu => {
-                self.menu = Menu::new();
+                self.menu = Menu::new(self.menu.current_menu_choice);
                 self.game_mode = GameMode::Game;
             }
         }
