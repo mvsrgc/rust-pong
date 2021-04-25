@@ -8,7 +8,11 @@ use ggez::{
     timer, Context, GameResult,
 };
 
-use crate::{ball::Ball, game_state::GameState, paddle::Paddle};
+use crate::{
+    ball::Ball,
+    game_state::{GameMode, GameState},
+    paddle::Paddle,
+};
 
 #[derive(Clone, Copy)]
 pub enum Side {
@@ -37,6 +41,10 @@ impl Wall {
 
 impl GameState {
     pub fn simulate(&mut self, ctx: &mut Context, time: f64) {
+        match self.game_mode {
+            GameMode::Menu => return,
+            GameMode::Game => (),
+        }
         // If the game is paused, then we don't want to simulate.
         match self.paused {
             Some(time_paused) => {

@@ -2,7 +2,7 @@ use rand::distributions::{Distribution, Uniform};
 use rand::thread_rng;
 
 const BALL_RADIUS: f32 = 8.0;
-const BALL_SPEED: f32 = 300.0;
+const BALL_SPEED: f32 = 500.0;
 pub struct Ball {
     pub x: f32,
     pub y: f32,

@@ -4,7 +4,7 @@ use ggez::{
     Context,
 };
 
-use crate::game_state::{GameState, DEFAULT_TIME_SCALE};
+use crate::game_state::{GameMode, GameState, DEFAULT_TIME_SCALE};
 
 // @Refactor
 const LEFT_PADDLE_INDEX: usize = 0;
@@ -21,11 +21,23 @@ impl GameState {
         match keycode {
             KeyCode::F1 => self.debug_mode = !self.debug_mode,
             KeyCode::F2 => self.play_sounds = !self.play_sounds,
-            KeyCode::Escape => event::quit(ctx),
+            KeyCode::Escape => self.toggle_menu(),
             KeyCode::W => self.paddles[LEFT_PADDLE_INDEX].is_up_holding = true,
             KeyCode::S => self.paddles[LEFT_PADDLE_INDEX].is_down_holding = true,
-            KeyCode::Up => self.paddles[RIGHT_PADDLE_INDEX].is_up_holding = true,
-            KeyCode::Down => self.paddles[RIGHT_PADDLE_INDEX].is_down_holding = true,
+            KeyCode::Up => match self.game_mode {
+                GameMode::Game => {
+                    self.paddles[RIGHT_PADDLE_INDEX].is_up_holding = true;
+                }
+                GameMode::Menu => {
+                    self.menu.advance_menu_choice(1);
+                }
+            },
+            KeyCode::Down => match self.game_mode {
+                GameMode::Game => self.paddles[RIGHT_PADDLE_INDEX].is_down_holding = true,
+                GameMode::Menu => {
+                    self.menu.advance_menu_choice(-1);
+                }
+            },
             KeyCode::PageUp => self.time_scale *= 1.5,
             KeyCode::PageDown => self.time_scale /= 1.5,
             KeyCode::Home => self.time_scale = DEFAULT_TIME_SCALE,

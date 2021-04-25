@@ -1,13 +1,16 @@
 use ggez::{
     graphics::Font,
-    graphics::{self, DrawMode, DrawParam},
+    graphics::{self, DrawMode, DrawParam, Scale},
     nalgebra::Point2,
     timer, Context, GameResult,
 };
 use graphics::Color;
 use std::time::Duration;
 
-use crate::game_state::GameState;
+use crate::game_state::{GameMode, GameState};
+
+// width = get_string_width(font, text, effect)
+// draw_text(font, width / 2, etc...)
 
 fn build_rectangle(
     ctx: &mut Context,
@@ -43,6 +46,19 @@ impl GameState {
     pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, graphics::BLACK);
 
+        match self.game_mode {
+            GameMode::Menu => {
+                self.draw_menu(ctx)?;
+            }
+            GameMode::Game => {
+                self.draw_game(ctx)?;
+            }
+        }
+
+        graphics::present(ctx)
+    }
+
+    fn draw_game(&mut self, ctx: &mut Context) -> GameResult<()> {
         // Draw debug mode information like FPS, mouse coordinates, time scale.
         if self.debug_mode {
             let fps_display = graphics::Text::new(format!("FPS: {}", timer::fps(ctx)));
@@ -129,6 +145,46 @@ impl GameState {
             None => (),
         }
 
-        graphics::present(ctx)
+        Ok(())
+    }
+
+    fn draw_menu(&mut self, ctx: &mut Context) -> GameResult<()> {
+        // Draw UI text
+        let fancy_font = Font::new(ctx, "/joystix_mono.ttf")?;
+
+        // Game title
+        let mut game_title_text = graphics::Text::new("PONG");
+        game_title_text.set_font(fancy_font.clone(), graphics::Scale::uniform(80.0));
+
+        let coords = [
+            self.game_width / 2.0 - game_title_text.width(ctx) as f32 / 2.0,
+            10.0,
+        ];
+
+        let params = graphics::DrawParam::default().dest(coords);
+        graphics::draw(ctx, &game_title_text, params)?;
+
+        let menu_items = vec!["Resume", "Music", "Quit"];
+
+        for i in 0..menu_items.len() {
+            let mut menu_choice_text = graphics::Text::new(menu_items[i]);
+            menu_choice_text.set_font(fancy_font.clone(), graphics::Scale::uniform(60.0));
+
+            let coords = [
+                self.game_width / 2.0 - menu_choice_text.width(ctx) as f32 / 2.0,
+                self.game_height / 4.0 + ((menu_choice_text.height(ctx) + 10) * i as u32) as f32,
+            ];
+
+            let mut color = Color::from_rgba(255, 255, 255, 25);
+
+            if self.menu.current_menu_choice == i as isize {
+                color = Color::from_rgba(0, 51, 102, 255);
+            }
+
+            let params = graphics::DrawParam::default().dest(coords).color(color);
+            graphics::draw(ctx, &menu_choice_text, params)?;
+        }
+
+        Ok(())
     }
 }

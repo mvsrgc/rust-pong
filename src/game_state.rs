@@ -6,7 +6,14 @@ use ggez::{audio, graphics::Rect, Context};
 
 use crate::pong::Side;
 
+use crate::menu::Menu;
+
 pub const DEFAULT_TIME_SCALE: f64 = 1.0;
+
+pub enum GameMode {
+    Menu,
+    Game,
+}
 
 pub struct GameState {
     pub dt: f64,
@@ -17,6 +24,7 @@ pub struct GameState {
     pub time_scale: f64,
     pub game_width: f32,
     pub game_height: f32,
+    pub game_mode: GameMode,
     pub ball: Ball,
     pub walls: Vec<Wall>,
     pub paddles: Vec<Paddle>,
@@ -26,6 +34,7 @@ pub struct GameState {
     pub goal_sound: audio::Source,
     pub pad_sound: audio::Source,
     pub wall_sound: audio::Source,
+    pub menu: Menu,
 }
 
 impl GameState {
@@ -63,6 +72,7 @@ impl GameState {
             time_scale,
             game_width,
             game_height,
+            game_mode: GameMode::Game,
             ball,
             walls,
             paddles,
@@ -72,6 +82,20 @@ impl GameState {
             goal_sound,
             pad_sound,
             wall_sound,
+            menu: Menu::new(),
+        }
+    }
+
+    pub fn toggle_menu(&mut self) {
+        match self.game_mode {
+            GameMode::Game => {
+                self.menu = Menu::new();
+                self.game_mode = GameMode::Menu;
+            }
+            GameMode::Menu => {
+                self.menu = Menu::new();
+                self.game_mode = GameMode::Game;
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ use ggez::{conf, event, GameResult};
 
 pub mod ball;
 pub mod game_state;
+pub mod menu;
 pub mod paddle;
 pub mod player_control;
 pub mod pong;
@@ -9,8 +10,8 @@ pub mod render;
 
 use crate::game_state::GameState;
 
-const GAME_WIDTH: f32 = 640.0;
-const GAME_HEIGHT: f32 = 480.0;
+const GAME_WIDTH: f32 = 1280.0;
+const GAME_HEIGHT: f32 = 720.0;
 
 fn main() -> GameResult {
     let resource_dir = std::path::PathBuf::from("./resources");
