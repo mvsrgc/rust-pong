@@ -157,10 +157,8 @@ impl GameState {
             match self.walls[i].side {
                 Side::Left => {
                     // Left wall
-                    if self.ball.x - self.ball.radius <= 0.0 {
-                        self.ball.x = 0.0 + self.ball.radius;
-                        self.player2_score = self.player2_score + 1;
-                    }
+                    self.ball.x = 0.0 + self.ball.radius;
+                    self.player2_score = self.player2_score + 1;
 
                     self.ball.dx = -self.ball.dx;
 
@@ -172,10 +170,8 @@ impl GameState {
                 }
                 Side::Right => {
                     // Right wall
-                    if self.ball.x + self.ball.radius >= self.game_width {
-                        self.ball.x = self.game_width - self.ball.radius;
-                        self.player1_score = self.player1_score + 1;
-                    }
+                    self.ball.x = self.game_width - self.ball.radius;
+                    self.player1_score = self.player1_score + 1;
 
                     self.ball.dx = -self.ball.dx;
 
@@ -187,9 +183,7 @@ impl GameState {
                 }
                 Side::Top => {
                     // Top wall
-                    if self.ball.y - self.ball.radius <= 0.0 {
-                        self.ball.y = 0.0 + self.ball.radius;
-                    }
+                    self.ball.y = 0.0 + self.ball.radius;
 
                     self.ball.dy = -self.ball.dy;
 
@@ -197,9 +191,7 @@ impl GameState {
                 }
                 Side::Bottom => {
                     // Bottom wall
-                    if self.ball.y + self.ball.radius >= self.game_height {
-                        self.ball.y = self.game_height - self.ball.radius;
-                    }
+                    self.ball.y = self.game_height - self.ball.radius;
 
                     self.ball.dy = -self.ball.dy;
 
