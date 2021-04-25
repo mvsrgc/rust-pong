@@ -98,19 +98,6 @@ impl GameState {
                 20.0,
                 graphics::WHITE,
             )?;
-
-            draw_text(
-                ctx,
-                &format!(
-                    "Dt: {} - Scale: {}",
-                    self.dt * self.time_scale,
-                    self.time_scale
-                ),
-                Point2::new(0.0, 25.0),
-                Font::default(),
-                20.0,
-                graphics::WHITE,
-            )?;
         }
 
         // Draw the paddles

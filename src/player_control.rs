@@ -4,7 +4,7 @@ use ggez::{
     Context,
 };
 
-use crate::game_state::{GameMode, GameState, DEFAULT_TIME_SCALE};
+use crate::game_state::{GameMode, GameState};
 
 // @Refactor
 const LEFT_PADDLE_INDEX: usize = 0;
@@ -51,10 +51,6 @@ impl GameState {
                     _ => (),
                 },
             },
-            KeyCode::PageUp => self.time_scale *= 1.5,
-            KeyCode::PageDown => self.time_scale /= 1.5,
-            KeyCode::Home => self.time_scale = DEFAULT_TIME_SCALE,
-            KeyCode::End => self.time_scale = 0.0,
             _ => (),
         }
     }

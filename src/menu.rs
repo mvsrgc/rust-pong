@@ -28,8 +28,4 @@ impl Menu {
             self.current_menu_choice -= MenuChoices::ItemsTotal as isize;
         }
     }
-
-    pub fn select_menu_choice(&self) {
-        let resume = MenuChoices::Resume as isize;
-    }
 }

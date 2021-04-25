@@ -22,7 +22,6 @@ fn main() -> GameResult {
         .add_resource_path(resource_dir);
 
     let (ctx, event_loop) = &mut cb.build()?;
-
     let game_state = &mut GameState::new(ctx, GAME_WIDTH, GAME_HEIGHT);
 
     event::run(ctx, event_loop, game_state)

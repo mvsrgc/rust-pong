@@ -21,7 +21,6 @@ pub struct GameState {
     pub mouse_y: f32,
     pub debug_mode: bool,
     pub play_sounds: bool,
-    pub time_scale: f64,
     pub game_width: f32,
     pub game_height: f32,
     pub game_mode: GameMode,
@@ -39,8 +38,6 @@ pub struct GameState {
 
 impl GameState {
     pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> GameState {
-        let time_scale: f64 = DEFAULT_TIME_SCALE; // You can slow down or speed up time with PgUP, PgDown
-
         // Create the paddles
         let left_paddle = Paddle::new(game_width, game_height, Side::Left);
         let right_paddle = Paddle::new(game_width, game_height, Side::Right);
@@ -54,7 +51,7 @@ impl GameState {
             Wall::new(Rect::new(0.0, game_height, game_width, 0.0), Side::Bottom),
         ];
 
-        let dt = (1.0 / 60.0) * time_scale;
+        let dt = 1.0 / 60.0;
 
         let ball = Ball::new(game_width, game_height);
 
@@ -71,7 +68,6 @@ impl GameState {
             mouse_y: 0.0,
             debug_mode: false,
             play_sounds: true,
-            time_scale,
             game_width,
             game_height,
             game_mode: GameMode::Game,

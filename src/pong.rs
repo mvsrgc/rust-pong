@@ -45,6 +45,12 @@ impl GameState {
             GameMode::Menu => return,
             GameMode::Game => (),
         }
+
+        // Pause for a bit when the game starts.
+        if timer::time_since_start(ctx) < Duration::from_millis(1000) {
+            self.paused = Some(Duration::from_millis(1000));
+        }
+
         // If the game is paused, then we don't want to simulate.
         match self.paused {
             Some(time_paused) => {
@@ -102,7 +108,9 @@ impl GameState {
 
         // Check if ball collides with any walls
         for i in 0..self.walls.len() {
-            if !ball_rect.overlaps(&self.walls[i].rect) {
+            if !ball_rect.overlaps(&self.walls[i].rect)
+                && (ball_rect.top() > 0.0 || ball_rect.bottom() < self.game_height)
+            {
                 continue;
             }
 
@@ -194,6 +202,8 @@ impl GameState {
             self.player1_score = 0;
             self.player2_score = 0;
         }
+
+        self.paused = Some(Duration::from_millis(1200));
     }
 }
 
@@ -209,7 +219,7 @@ impl EventHandler for GameState {
                 self.dt
             };
 
-            self.simulate(ctx, delta_time * self.time_scale);
+            self.simulate(ctx, delta_time);
 
             frame_time -= delta_time;
         }
