@@ -1,4 +1,3 @@
-use ggez::Context;
 use rand::distributions::{Distribution, Uniform};
 use rand::thread_rng;
 
@@ -13,7 +12,7 @@ pub struct Ball {
 }
 
 impl Ball {
-    pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> Ball {
+    pub fn new(game_width: f32, game_height: f32) -> Ball {
         let mut rng = thread_rng();
 
         let x = game_width / 2.0;

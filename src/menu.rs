@@ -1,17 +1,4 @@
-enum MenuChoices {
-    Resume = 0,
-    ToggleSounds = 1,
-    ToggleParticles = 2,
-    Quit = 3,
-    ResetGame = 4,
-    ItemsTotal = 5,
-}
-
-impl MenuChoices {
-    fn items_total() -> isize {
-        MenuChoices::ItemsTotal as isize
-    }
-}
+pub const TOTAL_ITEMS: isize = 5;
 
 pub struct Menu {
     pub current_menu_choice: isize,
@@ -28,11 +15,11 @@ impl Menu {
         self.current_menu_choice -= delta;
 
         if self.current_menu_choice < 0 {
-            self.current_menu_choice += MenuChoices::items_total();
+            self.current_menu_choice += TOTAL_ITEMS;
         }
 
-        if self.current_menu_choice >= MenuChoices::items_total() {
-            self.current_menu_choice -= MenuChoices::items_total();
+        if self.current_menu_choice >= TOTAL_ITEMS {
+            self.current_menu_choice -= TOTAL_ITEMS;
         }
     }
 }

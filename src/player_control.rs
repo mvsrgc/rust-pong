@@ -33,20 +33,7 @@ impl GameState {
             GameMode::Menu => match keycode {
                 KeyCode::Up => self.menu.advance_menu_choice(1),
                 KeyCode::Down => self.menu.advance_menu_choice(-1),
-                KeyCode::Return => match self.menu.current_menu_choice {
-                    0 => self.toggle_menu(),
-                    1 => self.play_sounds = !self.play_sounds,
-                    2 => {
-                        self.show_particles = !self.show_particles;
-                        self.stop_particles();
-                    }
-                    3 => {
-                        self.reset_game(ctx, true);
-                        self.toggle_menu()
-                    }
-                    4 => event::quit(ctx),
-                    _ => (),
-                },
+                KeyCode::Return => self.handle_menu_return(ctx, self.menu.current_menu_choice),
                 KeyCode::Escape => self.toggle_menu(),
                 _ => (),
             },
@@ -64,5 +51,24 @@ impl GameState {
             },
             _ => (),
         }
+    }
+
+    fn handle_menu_return(&mut self, ctx: &mut Context, current_menu_choice: isize) {
+        match current_menu_choice {
+            0 => self.toggle_menu(),
+            1 => self.play_sounds = !self.play_sounds,
+            2 => {
+                if self.particle_images.len() > 1 {
+                    self.show_particles = !self.show_particles;
+                }
+                self.stop_particles();
+            }
+            3 => {
+                self.reset_game(true);
+                self.toggle_menu()
+            }
+            4 => event::quit(ctx),
+            _ => (),
+        };
     }
 }

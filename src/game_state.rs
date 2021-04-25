@@ -1,6 +1,13 @@
 use std::time::Duration;
 
-use crate::{ball::Ball, paddle::Paddle, particle::Particle, pong::Wall};
+use std::collections::HashMap;
+
+use crate::{
+    ball::Ball,
+    paddle::Paddle,
+    particle::{Particle, ParticleType},
+    pong::Wall,
+};
 
 use ggez::{
     audio,
@@ -38,19 +45,23 @@ pub struct GameState {
     pub goal_sound: audio::Source,
     pub pad_sound: audio::Source,
     pub wall_sound: audio::Source,
-    pub particle_images: Vec<Image>,
+    pub particle_images: HashMap<ParticleType, Image>,
     pub particles: Vec<Particle>,
     pub menu: Menu,
 }
 
 impl GameState {
     pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> GameState {
+        let dt = 1.0 / 60.0;
+
         // Create the paddles
         let left_paddle = Paddle::new(game_width, game_height, Side::Left);
         let right_paddle = Paddle::new(game_width, game_height, Side::Right);
 
+        // Vector of paddles to easily iterate over each paddle and check collisions with one loop.
         let paddles = vec![left_paddle, right_paddle];
 
+        // Vec of walls for the same reason.
         let walls = vec![
             Wall::new(Rect::new(0.0, 0.0, game_width, 0.0), Side::Top),
             Wall::new(Rect::new(0.0, 0.0, 0.0, game_height), Side::Left),
@@ -58,29 +69,23 @@ impl GameState {
             Wall::new(Rect::new(0.0, game_height, game_width, 0.0), Side::Bottom),
         ];
 
-        let dt = 1.0 / 60.0;
+        // Create the ball.
+        let ball = Ball::new(game_width, game_height);
 
-        // @Error - We should handle errors here instead of .unwrap()
+        // Load sounds
+        //  We should handle errors here instead of .unwrap()
         let goal_sound = audio::Source::new(ctx, "/goal.wav").unwrap();
         let pad_sound = audio::Source::new(ctx, "/pad.wav").unwrap();
         let wall_sound = audio::Source::new(ctx, "/wall.wav").unwrap();
 
-        let ball = Ball::new(ctx, game_width, game_height);
-
+        // Initialize the menu
         let menu = Menu::new(0);
 
-        // @Error - We should handle errors here instead of .unwrap()
-        let mut particles = vec![];
-        let particle_images = vec![
-            Image::new(ctx, "/blue.bmp").unwrap(),
-            Image::new(ctx, "/red.bmp").unwrap(),
-            Image::new(ctx, "/green.bmp").unwrap(),
-            Image::new(ctx, "/shimmer.bmp").unwrap(),
-        ];
-        for i in 0..12 {
-            let particle = Particle::new(ball.x, ball.y, particle_images.clone(), false);
-            particles.push(particle);
-        }
+        // Initialize particles
+        let particle_images = Self::load_particle_images(ctx);
+
+        let particles: Vec<Particle> =
+            vec![Particle::new(ball.x, ball.y, &particle_images, false); 12];
 
         // Initialize the state
         GameState {
@@ -108,6 +113,21 @@ impl GameState {
         }
     }
 
+    fn load_particle_images(ctx: &mut Context) -> HashMap<ParticleType, Image> {
+        // We should handle errors here instead of .unwrap()
+
+        let mut particle_images = HashMap::new();
+        particle_images.insert(ParticleType::Green, Image::new(ctx, "/green.bmp").unwrap());
+        particle_images.insert(ParticleType::Red, Image::new(ctx, "/red.bmp").unwrap());
+        particle_images.insert(ParticleType::Blue, Image::new(ctx, "/blue.bmp").unwrap());
+        particle_images.insert(
+            ParticleType::Shimmer,
+            Image::new(ctx, "/shimmer.bmp").unwrap(),
+        );
+
+        particle_images
+    }
+
     pub fn toggle_menu(&mut self) {
         match self.game_mode {
             GameMode::Game => {
@@ -124,8 +144,8 @@ impl GameState {
     }
 
     pub fn stop_particles(&mut self) {
-        for i in 0..self.particles.len() {
-            self.particles[i].is_dead = true;
+        for particle in self.particles.iter_mut() {
+            (*particle).is_dead = true;
         }
     }
 }

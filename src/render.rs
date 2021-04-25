@@ -5,10 +5,13 @@ use ggez::{
     timer, Context, GameResult,
 };
 use graphics::Color;
-use std::time::Duration;
+use std::{collections::HashMap, time::Duration};
 
-use crate::game_state::{GameMode, GameState};
 use crate::particle::Particle;
+use crate::{
+    game_state::{GameMode, GameState},
+    particle::ParticleType,
+};
 
 fn get_text_width(ctx: &mut Context, text: &str, font: Font, scale: f32) -> u32 {
     let mut text = graphics::Text::new(text);
@@ -77,39 +80,41 @@ fn draw_particles(
     x: f32,
     y: f32,
     particles: &mut Vec<Particle>,
-    particle_images: Vec<Image>,
+    particle_images: &HashMap<ParticleType, Image>,
 ) -> GameResult<()> {
-    for i in 0..particles.len() {
-        if particles[i].is_dead {
-            particles[i] = Particle::new(x, y, particle_images.clone(), false);
+    for particle in particles.iter_mut() {
+        if particle.is_dead {
+            *particle = Particle::new(x, y, &particle_images, false);
         }
 
-        if particles[i].frame % 2 == 0 {
-            particles[i].shimmer = true;
+        if particle.frame % 2 == 0 {
+            particle.shimmer = true;
         }
 
-        particles[i].frame = particles[i].frame + 1;
+        particle.frame = particle.frame + 1;
 
-        if particles[i].frame > 12 {
-            particles[i].is_dead = true;
+        if particle.frame > 12 {
+            particle.is_dead = true;
         }
 
-        if let Some(image) = &particles[i].surface {
+        if let Some(image) = &particle.surface {
             graphics::draw(
                 ctx,
                 image,
-                DrawParam::new().dest(Point2::new(particles[i].x, particles[i].y)),
+                DrawParam::new().dest(Point2::new(particle.x, particle.y)),
             )?;
 
-            if particles[i].shimmer {
-                graphics::draw(
-                    ctx,
-                    &particle_images[3],
-                    DrawParam::new()
-                        .dest(Point2::new(particles[i].x, particles[i].y))
-                        .color(Color::from_rgba(255, 255, 255, 25)),
-                )?;
-                particles[i].shimmer = false;
+            if particle.shimmer {
+                if let Some(shimmer_image) = particle_images.get(&ParticleType::Shimmer) {
+                    graphics::draw(
+                        ctx,
+                        shimmer_image,
+                        DrawParam::new()
+                            .dest(Point2::new(particle.x, particle.y))
+                            .color(Color::from_rgba(255, 255, 255, 50)),
+                    )?;
+                    particle.shimmer = false;
+                }
             }
         }
     }
@@ -147,13 +152,13 @@ impl GameState {
         }
 
         // Draw the paddles
-        for i in 0..self.paddles.len() {
+        for paddle in self.paddles.iter_mut() {
             let paddle_rect = build_rectangle(
                 ctx,
-                self.paddles[i].rect.x,
-                self.paddles[i].rect.y,
-                self.paddles[i].rect.w,
-                self.paddles[i].rect.h,
+                (*paddle).rect.x,
+                (*paddle).rect.y,
+                (*paddle).rect.w,
+                (*paddle).rect.h,
             )?;
 
             graphics::draw(ctx, &paddle_rect, DrawParam::default())?;
@@ -170,7 +175,7 @@ impl GameState {
                 self.ball.x,
                 self.ball.y,
                 &mut self.particles,
-                self.particle_images.clone(),
+                &self.particle_images,
             )?;
         }
 
