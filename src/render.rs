@@ -7,7 +7,7 @@ use ggez::{
 use graphics::Color;
 use std::time::Duration;
 
-use crate::pong::GameState;
+use crate::game_state::GameState;
 
 fn build_rectangle(
     ctx: &mut Context,

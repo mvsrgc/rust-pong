@@ -4,7 +4,8 @@ use ggez::{
     Context,
 };
 
-use crate::pong::{GameState, DEFAULT_TIME_SCALE};
+use crate::game_state::GameState;
+use crate::pong::DEFAULT_TIME_SCALE;
 
 // @Refactor
 const LEFT_PADDLE_INDEX: usize = 0;
