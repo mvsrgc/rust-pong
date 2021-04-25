@@ -9,7 +9,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="pong.webp" alt="Logo" width="640" height="480">
+    <img src="pong.webp" alt="Logo" width="1280" height="720">
   </a>
 
   <h3 align="center">Pong Game with Rust</h3>
