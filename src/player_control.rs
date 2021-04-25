@@ -43,7 +43,11 @@ impl GameState {
                 GameMode::Menu => match self.menu.current_menu_choice {
                     0 => self.toggle_menu(),
                     1 => self.play_sounds = !self.play_sounds,
-                    2 => event::quit(ctx),
+                    2 => {
+                        self.reset_game(true);
+                        self.toggle_menu()
+                    }
+                    3 => event::quit(ctx),
                     _ => (),
                 },
             },

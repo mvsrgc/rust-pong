@@ -2,7 +2,8 @@ enum MenuChoices {
     Resume = 0,
     ToggleMusic = 1,
     Quit = 2,
-    ItemsTotal = 3,
+    ResetGame = 3,
+    ItemsTotal = 4,
 }
 
 pub struct Menu {

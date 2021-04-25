@@ -209,7 +209,7 @@ impl GameState {
             false => "Sounds OFF",
         };
 
-        let menu_items = vec!["Resume", sound_toggle_text, "Quit"];
+        let menu_items = vec!["Resume", sound_toggle_text, "Restart", "Quit"];
 
         for i in 0..menu_items.len() {
             let mut color = Color::from_rgba(255, 255, 255, 25);
