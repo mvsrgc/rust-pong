@@ -7,9 +7,9 @@ const BALL_SPEED: f32 = 300.0;
 pub struct Ball {
     pub x: f32,
     pub y: f32,
-    pub radius: f32,
     pub dx: f32,
     pub dy: f32,
+    pub radius: f32,
 }
 
 impl Ball {
@@ -20,12 +20,15 @@ impl Ball {
 
         let direction_die = Uniform::new_inclusive(0, directions.len() - 1);
 
+        let dx = BALL_SPEED * directions[direction_die.sample(&mut rng)] as f32;
+        let dy = BALL_SPEED * directions[direction_die.sample(&mut rng)] as f32;
+
         Ball {
             x: game_width / 2.0,
             y: game_height / 2.0,
+            dx,
+            dy,
             radius: BALL_RADIUS,
-            dx: BALL_SPEED * directions[direction_die.sample(&mut rng)] as f32,
-            dy: BALL_SPEED * directions[direction_die.sample(&mut rng)] as f32,
         }
     }
 }

@@ -48,7 +48,6 @@ This is a Pong game I made to learn the Rust programming language and game devel
 
 ### Built With
 
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 * [Rust](https://www.rust-lang.org/)
 * [GGEZ](https://github.com/ggez/ggez)
 

@@ -26,8 +26,10 @@ impl Paddle {
         let w = PADDLE_WIDTH;
         let h = PADDLE_HEIGHT;
 
+        let rect = Rect::new(x, y, w, h);
+
         Paddle {
-            rect: Rect::new(x, y, w, h),
+            rect,
             side,
             dy: PADDLE_SPEED,
             is_up_holding: false,
