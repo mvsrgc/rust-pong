@@ -65,14 +65,19 @@ impl GameState {
             // Update paddle position
             self.paddles[i].rect.y = self.paddles[i].rect.y - (distance as f32 * direction_value);
 
-            // Paddle collides with top wall
-            if self.paddles[i].rect.y <= 0.0 {
-                self.paddles[i].rect.y = 0.0
-            }
+            // Paddle collides with top or  wall
+            for j in 0..self.walls.len() {
+                if !self.paddles[i].rect.overlaps(&self.walls[j].rect) {
+                    continue;
+                }
 
-            // Paddle collides with bottom wall
-            if self.paddles[i].rect.y + self.paddles[i].rect.h >= self.game_height {
-                self.paddles[i].rect.y = self.game_height - self.paddles[i].rect.h;
+                match self.walls[j].side {
+                    Side::Top => self.paddles[i].rect.y = 0.0,
+                    Side::Bottom => {
+                        self.paddles[i].rect.y = self.game_height - self.paddles[i].rect.h;
+                    }
+                    _ => {}
+                }
             }
         }
 
