@@ -75,9 +75,10 @@ impl GameState {
             Image::new(ctx, "/blue.bmp").unwrap(),
             Image::new(ctx, "/red.bmp").unwrap(),
             Image::new(ctx, "/green.bmp").unwrap(),
+            Image::new(ctx, "/shimmer.bmp").unwrap(),
         ];
-        for i in 0..10 {
-            let particle = Particle::new(ball.x, ball.y, particle_images.clone());
+        for i in 0..12 {
+            let particle = Particle::new(ball.x, ball.y, particle_images.clone(), false);
             particles.push(particle);
         }
 
@@ -118,6 +119,8 @@ impl GameState {
                 self.game_mode = GameMode::Game;
             }
         }
+
+        self.stop_particles();
     }
 
     pub fn stop_particles(&mut self) {

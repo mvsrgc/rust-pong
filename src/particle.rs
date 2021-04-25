@@ -1,11 +1,11 @@
-use ggez::{graphics::Image, Context, GameResult};
+use ggez::graphics::Image;
 use rand::distributions::{Distribution, Uniform};
-use rand::thread_rng;
 
 pub enum ParticleType {
     Green,
     Red,
     Blue,
+    Shimmer,
     None,
 }
 pub struct Particle {
@@ -15,10 +15,11 @@ pub struct Particle {
     pub is_dead: bool,
     pub particle_type: ParticleType,
     pub surface: Option<Image>,
+    pub shimmer: bool,
 }
 
 impl Particle {
-    pub fn new(x: f32, y: f32, images: Vec<Image>) -> Particle {
+    pub fn new(x: f32, y: f32, images: Vec<Image>, shimmer: bool) -> Particle {
         let mut rng = rand::thread_rng();
 
         let die = Uniform::new_inclusive(0, 24);
@@ -59,6 +60,7 @@ impl Particle {
             is_dead: false,
             particle_type,
             surface,
+            shimmer,
         }
     }
 }

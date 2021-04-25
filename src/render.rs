@@ -1,6 +1,6 @@
 use ggez::{
     graphics::Font,
-    graphics::{self, DrawMode, DrawParam, Scale},
+    graphics::{self, DrawMode, DrawParam, Image, Scale},
     nalgebra::Point2,
     timer, Context, GameResult,
 };
@@ -72,6 +72,51 @@ fn build_circle(ctx: &mut Context, x: f32, y: f32, r: f32) -> GameResult<graphic
     mb.build(ctx)
 }
 
+fn draw_particles(
+    ctx: &mut Context,
+    x: f32,
+    y: f32,
+    particles: &mut Vec<Particle>,
+    particle_images: Vec<Image>,
+) -> GameResult<()> {
+    for i in 0..particles.len() {
+        if particles[i].is_dead {
+            particles[i] = Particle::new(x, y, particle_images.clone(), false);
+        }
+
+        if particles[i].frame % 2 == 0 {
+            particles[i].shimmer = true;
+        }
+
+        particles[i].frame = particles[i].frame + 1;
+
+        if particles[i].frame > 12 {
+            particles[i].is_dead = true;
+        }
+
+        if let Some(image) = &particles[i].surface {
+            graphics::draw(
+                ctx,
+                image,
+                DrawParam::new().dest(Point2::new(particles[i].x, particles[i].y)),
+            )?;
+
+            if particles[i].shimmer {
+                graphics::draw(
+                    ctx,
+                    &particle_images[3],
+                    DrawParam::new()
+                        .dest(Point2::new(particles[i].x, particles[i].y))
+                        .color(Color::from_rgba(255, 255, 255, 25)),
+                )?;
+                particles[i].shimmer = false;
+            }
+        }
+    }
+
+    Ok(())
+}
+
 impl GameState {
     pub fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, graphics::BLACK);
@@ -120,27 +165,13 @@ impl GameState {
 
         // Draw ball particles
         if self.show_particles {
-            for i in 0..self.particles.len() {
-                if self.particles[i].is_dead {
-                    self.particles[i] =
-                        Particle::new(self.ball.x, self.ball.y, self.particle_images.clone());
-                }
-
-                self.particles[i].frame = self.particles[i].frame + 1;
-
-                if self.particles[i].frame > 15 {
-                    self.particles[i].is_dead = true;
-                }
-
-                if let Some(image) = &self.particles[i].surface {
-                    graphics::draw(
-                        ctx,
-                        image,
-                        DrawParam::new()
-                            .dest(Point2::new(self.particles[i].x, self.particles[i].y)),
-                    )?;
-                }
-            }
+            draw_particles(
+                ctx,
+                self.ball.x,
+                self.ball.y,
+                &mut self.particles,
+                self.particle_images.clone(),
+            )?;
         }
 
         // Draw UI text
