@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use ggez::{
-    audio::SoundSource,
     event::EventHandler,
     graphics::Rect,
     input::keyboard::{KeyCode, KeyMods},
@@ -122,7 +121,7 @@ impl GameState {
 
                     self.ball.dx = -self.ball.dx;
 
-                    self.assets.play_sound(SoundType::Goal);
+                    self.assets.play_sound(self.play_sounds, SoundType::Goal);
 
                     self.reset_game(false);
 
@@ -135,7 +134,7 @@ impl GameState {
 
                     self.ball.dx = -self.ball.dx;
 
-                    self.assets.play_sound(SoundType::Goal);
+                    self.assets.play_sound(self.play_sounds, SoundType::Goal);
 
                     self.reset_game(false);
 
@@ -147,7 +146,7 @@ impl GameState {
 
                     self.ball.dy = -self.ball.dy;
 
-                    self.assets.play_sound(SoundType::Wall)
+                    self.assets.play_sound(self.play_sounds, SoundType::Wall)
                 }
                 Side::Bottom => {
                     // Bottom wall
@@ -155,7 +154,7 @@ impl GameState {
 
                     self.ball.dy = -self.ball.dy;
 
-                    self.assets.play_sound(SoundType::Wall);
+                    self.assets.play_sound(self.play_sounds, SoundType::Wall);
                 }
             }
         }
@@ -176,7 +175,7 @@ impl GameState {
 
                 self.ball.dx = -self.ball.dx;
 
-                self.assets.play_sound(SoundType::Pad);
+                self.assets.play_sound(self.play_sounds, SoundType::Pad);
             }
         }
     }

@@ -37,7 +37,11 @@ impl Assets {
         })
     }
 
-    pub fn play_sound(&mut self, sound_type: SoundType) {
+    pub fn play_sound(&mut self, play_sounds: bool, sound_type: SoundType) {
+        if !play_sounds {
+            return;
+        };
+
         match sound_type {
             SoundType::Goal => self.goal_sound.play_detached().unwrap(),
             SoundType::Pad => self.pad_sound.play_detached().unwrap(),
