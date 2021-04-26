@@ -8,7 +8,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mvsrgc/rust-pong/master/pong.webp" width="920" height="780"></img>
+  <img src="https://media.giphy.com/media/kuX2nL73MB77LgncDS/giphy.gif" width="624" height="351"></img>
 
   <h3 align="center">Pong Game with Rust</h3>
 </p>
