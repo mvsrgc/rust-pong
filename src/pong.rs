@@ -122,7 +122,7 @@ impl GameState {
 
                     self.ball.dx = -self.ball.dx;
 
-                    self.play_sound(SoundType::Goal);
+                    self.assets.play_sound(SoundType::Goal);
 
                     self.reset_game(false);
 
@@ -135,7 +135,7 @@ impl GameState {
 
                     self.ball.dx = -self.ball.dx;
 
-                    self.play_sound(SoundType::Goal);
+                    self.assets.play_sound(SoundType::Goal);
 
                     self.reset_game(false);
 
@@ -147,7 +147,7 @@ impl GameState {
 
                     self.ball.dy = -self.ball.dy;
 
-                    self.play_sound(SoundType::Wall)
+                    self.assets.play_sound(SoundType::Wall)
                 }
                 Side::Bottom => {
                     // Bottom wall
@@ -155,7 +155,7 @@ impl GameState {
 
                     self.ball.dy = -self.ball.dy;
 
-                    self.play_sound(SoundType::Wall);
+                    self.assets.play_sound(SoundType::Wall);
                 }
             }
         }
@@ -176,17 +176,7 @@ impl GameState {
 
                 self.ball.dx = -self.ball.dx;
 
-                self.play_sound(SoundType::Pad);
-            }
-        }
-    }
-
-    pub fn play_sound(&mut self, sound_type: SoundType) {
-        if self.play_sounds {
-            match sound_type {
-                SoundType::Goal => self.goal_sound.play_detached().unwrap(),
-                SoundType::Pad => self.pad_sound.play_detached().unwrap(),
-                SoundType::Wall => self.wall_sound.play_detached().unwrap(),
+                self.assets.play_sound(SoundType::Pad);
             }
         }
     }

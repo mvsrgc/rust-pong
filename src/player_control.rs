@@ -58,9 +58,7 @@ impl GameState {
             0 => self.toggle_menu(),
             1 => self.play_sounds = !self.play_sounds,
             2 => {
-                if self.particle_images.len() > 1 {
-                    self.show_particles = !self.show_particles;
-                }
+                self.show_particles = !self.show_particles;
                 self.stop_particles();
             }
             3 => {

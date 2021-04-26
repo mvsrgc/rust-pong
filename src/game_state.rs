@@ -1,18 +1,11 @@
 use std::time::Duration;
 
-use std::collections::HashMap;
-
-use crate::{
-    ball::Ball,
-    paddle::Paddle,
-    particle::{Particle, ParticleType},
-    pong::Wall,
-};
+use crate::{assets::Assets, ball::Ball, paddle::Paddle, particle::Particle, pong::Wall};
 
 use ggez::{
     audio,
-    graphics::{Image, Rect},
-    Context,
+    graphics::{draw, drawable_size, Rect},
+    Context, GameResult,
 };
 
 use crate::pong::Side;
@@ -42,17 +35,16 @@ pub struct GameState {
     pub paused: Option<Duration>,
     pub player1_score: usize,
     pub player2_score: usize,
-    pub goal_sound: audio::Source,
-    pub pad_sound: audio::Source,
-    pub wall_sound: audio::Source,
-    pub particle_images: HashMap<ParticleType, Image>,
     pub particles: Vec<Particle>,
     pub menu: Menu,
+    pub assets: Assets,
 }
 
 impl GameState {
-    pub fn new(ctx: &mut Context, game_width: f32, game_height: f32) -> GameState {
+    pub fn new(ctx: &mut Context) -> GameResult<GameState> {
         let dt = 1.0 / 60.0;
+
+        let (game_width, game_height) = drawable_size(ctx);
 
         // Create the paddles
         let left_paddle = Paddle::new(game_width, game_height, Side::Left);
@@ -72,23 +64,16 @@ impl GameState {
         // Create the ball.
         let ball = Ball::new(game_width, game_height);
 
-        // Load sounds
-        //  We should handle errors here instead of .unwrap()
-        let goal_sound = audio::Source::new(ctx, "/goal.wav").unwrap();
-        let pad_sound = audio::Source::new(ctx, "/pad.wav").unwrap();
-        let wall_sound = audio::Source::new(ctx, "/wall.wav").unwrap();
-
         // Initialize the menu
         let menu = Menu::new(0);
 
         // Initialize particles
-        let particle_images = Self::load_particle_images(ctx);
+        let mut assets = Assets::new(ctx)?;
 
-        let particles: Vec<Particle> =
-            vec![Particle::new(ball.x, ball.y, &particle_images, false); 12];
+        let particles: Vec<Particle> = vec![Particle::new(ball.x, ball.y, &mut assets, false); 12];
 
         // Initialize the state
-        GameState {
+        let s = GameState {
             dt,
             mouse_x: 0.0,
             mouse_y: 0.0,
@@ -104,28 +89,12 @@ impl GameState {
             paused: None,
             player1_score: 0,
             player2_score: 0,
-            goal_sound,
-            pad_sound,
-            wall_sound,
-            particle_images,
             particles,
             menu,
-        }
-    }
+            assets,
+        };
 
-    fn load_particle_images(ctx: &mut Context) -> HashMap<ParticleType, Image> {
-        // We should handle errors here instead of .unwrap()
-
-        let mut particle_images = HashMap::new();
-        particle_images.insert(ParticleType::Green, Image::new(ctx, "/green.bmp").unwrap());
-        particle_images.insert(ParticleType::Red, Image::new(ctx, "/red.bmp").unwrap());
-        particle_images.insert(ParticleType::Blue, Image::new(ctx, "/blue.bmp").unwrap());
-        particle_images.insert(
-            ParticleType::Shimmer,
-            Image::new(ctx, "/shimmer.bmp").unwrap(),
-        );
-
-        particle_images
+        Ok(s)
     }
 
     pub fn toggle_menu(&mut self) {

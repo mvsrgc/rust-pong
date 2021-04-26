@@ -7,7 +7,7 @@ use ggez::{
 use graphics::Color;
 use std::{collections::HashMap, time::Duration};
 
-use crate::particle::Particle;
+use crate::{assets::Assets, particle::Particle};
 use crate::{
     game_state::{GameMode, GameState},
     particle::ParticleType,
@@ -80,11 +80,11 @@ fn draw_particles(
     x: f32,
     y: f32,
     particles: &mut Vec<Particle>,
-    particle_images: &HashMap<ParticleType, Image>,
+    assets: &mut Assets,
 ) -> GameResult<()> {
     for particle in particles.iter_mut() {
         if particle.is_dead {
-            *particle = Particle::new(x, y, &particle_images, false);
+            *particle = Particle::new(x, y, assets, false);
         }
 
         if particle.frame % 2 == 0 {
@@ -97,25 +97,26 @@ fn draw_particles(
             particle.is_dead = true;
         }
 
-        if let Some(image) = &particle.surface {
+        let image = assets.particle_image(particle.particle_type);
+
+        graphics::draw(
+            ctx,
+            image,
+            DrawParam::new().dest(Point2::new(particle.x, particle.y)),
+        )?;
+
+        if particle.shimmer {
+            let shimmer_image = assets.particle_image(ParticleType::Shimmer);
+
             graphics::draw(
                 ctx,
-                image,
-                DrawParam::new().dest(Point2::new(particle.x, particle.y)),
+                shimmer_image,
+                DrawParam::new()
+                    .dest(Point2::new(particle.x, particle.y))
+                    .color(Color::from_rgba(255, 255, 255, 50)),
             )?;
 
-            if particle.shimmer {
-                if let Some(shimmer_image) = particle_images.get(&ParticleType::Shimmer) {
-                    graphics::draw(
-                        ctx,
-                        shimmer_image,
-                        DrawParam::new()
-                            .dest(Point2::new(particle.x, particle.y))
-                            .color(Color::from_rgba(255, 255, 255, 50)),
-                    )?;
-                    particle.shimmer = false;
-                }
-            }
+            particle.shimmer = false;
         }
     }
 
@@ -175,7 +176,7 @@ impl GameState {
                 self.ball.x,
                 self.ball.y,
                 &mut self.particles,
-                &self.particle_images,
+                &mut self.assets,
             )?;
         }
 

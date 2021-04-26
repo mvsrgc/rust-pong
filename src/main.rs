@@ -1,5 +1,6 @@
 use ggez::{conf, event, GameResult};
 
+pub mod assets;
 pub mod ball;
 pub mod game_state;
 pub mod menu;
@@ -22,8 +23,9 @@ fn main() -> GameResult {
         .window_mode(conf::WindowMode::default().dimensions(GAME_WIDTH as f32, GAME_HEIGHT as f32))
         .add_resource_path(resource_dir);
 
-    let (ctx, event_loop) = &mut cb.build()?;
-    let game_state = &mut GameState::new(ctx, GAME_WIDTH, GAME_HEIGHT);
+    let (mut ctx, mut events_loop) = cb.build()?;
 
-    event::run(ctx, event_loop, game_state)
+    let mut game = GameState::new(&mut ctx)?;
+
+    event::run(&mut ctx, &mut events_loop, &mut game)
 }
