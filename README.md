@@ -8,7 +8,9 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
+  <a href="https://raw.githubusercontent.com/mvsrgc/rust-pong/master/pong.webp">
   <img src="https://media.giphy.com/media/kuX2nL73MB77LgncDS/giphy.gif" width="624" height="351"></img>
+  </a>
   <br />
   <a align="center" href="https://raw.githubusercontent.com/mvsrgc/rust-pong/master/pong.webp">High quality video</a>
 
