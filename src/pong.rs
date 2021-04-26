@@ -159,16 +159,14 @@ impl GameState {
             }
         }
 
-        // If ball collides with paddles
-        for i in 0..self.paddles.len() {
-            if ball_rect.overlaps(&self.paddles[i].rect) {
-                match self.paddles[i].side {
+        for paddle in &self.paddles {
+            if ball_rect.overlaps(&paddle.rect) {
+                match paddle.side {
                     Side::Left => {
-                        self.ball.x =
-                            self.paddles[i].rect.x + self.paddles[i].rect.w + self.ball.radius;
+                        self.ball.x = paddle.rect.x + paddle.rect.w + self.ball.radius;
                     }
                     Side::Right => {
-                        self.ball.x = self.paddles[i].rect.x - self.ball.radius;
+                        self.ball.x = paddle.rect.x - self.ball.radius;
                     }
                     _ => {}
                 }
@@ -183,8 +181,8 @@ impl GameState {
     pub fn reset_game(&mut self, reset_score: bool) {
         self.ball = Ball::new(self.game_width, self.game_height);
 
-        for i in 0..self.paddles.len() {
-            self.paddles[i] = Paddle::new(self.game_width, self.game_height, self.paddles[i].side);
+        for paddle in self.paddles.iter_mut() {
+            *paddle = Paddle::new(self.game_width, self.game_height, paddle.side);
         }
 
         if reset_score {

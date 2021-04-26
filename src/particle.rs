@@ -1,6 +1,3 @@
-use std::collections::HashMap;
-
-use ggez::graphics::Image;
 use rand::distributions::{Distribution, Uniform};
 
 use crate::assets::Assets;
