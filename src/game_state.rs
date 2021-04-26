@@ -68,9 +68,9 @@ impl GameState {
         let menu = Menu::new(0);
 
         // Initialize particles
-        let mut assets = Assets::new(ctx)?;
+        let assets = Assets::new(ctx)?;
 
-        let particles: Vec<Particle> = vec![Particle::new(ball.x, ball.y, &mut assets, false); 12];
+        let particles: Vec<Particle> = vec![Particle::new(ball.x, ball.y, false); 12];
 
         // Initialize the state
         let s = GameState {

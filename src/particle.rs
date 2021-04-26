@@ -22,7 +22,7 @@ pub struct Particle {
 }
 
 impl Particle {
-    pub fn new(x: f32, y: f32, assets: &mut Assets, shimmer: bool) -> Particle {
+    pub fn new(x: f32, y: f32, shimmer: bool) -> Particle {
         let mut rng = rand::thread_rng();
 
         let x = x - 16.0 + Uniform::new_inclusive(0, 24).sample(&mut rng) as f32;

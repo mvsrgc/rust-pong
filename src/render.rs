@@ -84,7 +84,7 @@ fn draw_particles(
 ) -> GameResult<()> {
     for particle in particles.iter_mut() {
         if particle.is_dead {
-            *particle = Particle::new(x, y, assets, false);
+            *particle = Particle::new(x, y, false);
         }
 
         if particle.frame % 2 == 0 {
@@ -211,29 +211,26 @@ impl GameState {
         )?;
 
         // Draw READY then draw START! when the game is reset
-        match self.paused {
-            Some(time_paused) => {
-                let mut status_text_string = "READY";
+        if let Some(pause_time) = self.paused {
+            let mut status_text_string = "READY";
 
-                if time_paused <= Duration::from_millis(500) {
-                    status_text_string = "START!";
-                }
-
-                let width = get_text_width(ctx, status_text_string, fancy_font.clone(), 25.0);
-                let height = get_text_height(ctx, status_text_string, fancy_font.clone(), 25.0);
-                draw_text(
-                    ctx,
-                    status_text_string,
-                    Point2::new(
-                        self.game_width / 2.0 - width as f32 / 2.0,
-                        (self.game_height / 2.0 - height as f32 / 2.0) + height as f32 * 1.7,
-                    ),
-                    fancy_font.clone(),
-                    25.0,
-                    Color::from_rgba(255, 255, 255, 25),
-                )?;
+            if pause_time <= Duration::from_millis(500) {
+                status_text_string = "START!";
             }
-            None => (),
+
+            let width = get_text_width(ctx, status_text_string, fancy_font.clone(), 25.0);
+            let height = get_text_height(ctx, status_text_string, fancy_font.clone(), 25.0);
+            draw_text(
+                ctx,
+                status_text_string,
+                Point2::new(
+                    self.game_width / 2.0 - width as f32 / 2.0,
+                    (self.game_height / 2.0 - height as f32 / 2.0) + height as f32 * 1.7,
+                ),
+                fancy_font.clone(),
+                25.0,
+                Color::from_rgba(255, 255, 255, 25),
+            )?;
         }
 
         Ok(())
