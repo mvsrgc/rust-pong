@@ -8,7 +8,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <img width="1024" height="720" src="https://gfycat.com/cheeryliquidemeraldtreeskink">
+  <img src="https://media.giphy.com/media/kuX2nL73MB77LgncDS/giphy.gif" width="480" height="270"></img>
 
   <h3 align="center">Pong Game with Rust</h3>
 </p>
