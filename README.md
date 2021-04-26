@@ -8,7 +8,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <img src="https://media.giphy.com/media/kuX2nL73MB77LgncDS/giphy.gif" width="480" height="270"></img>
+  <img src="https://media.giphy.com/media/kuX2nL73MB77LgncDS/giphy.gif" width="624" height="351"></img>
 
   <h3 align="center">Pong Game with Rust</h3>
 </p>
