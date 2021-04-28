@@ -49,13 +49,13 @@ impl Assets {
         }
     }
 
-    pub fn particle_image(&mut self, particle: ParticleType) -> &graphics::Image {
+    pub fn particle_image(&self, particle: ParticleType) -> &graphics::Image {
         match particle {
-            ParticleType::Green => &mut self.green_particle,
-            ParticleType::Red => &mut self.red_particle,
-            ParticleType::Blue => &mut self.blue_particle,
-            ParticleType::Shimmer => &mut self.shimmer_particle,
-            _ => &mut self.green_particle,
+            ParticleType::Green => &self.green_particle,
+            ParticleType::Red => &self.red_particle,
+            ParticleType::Blue => &self.blue_particle,
+            ParticleType::Shimmer => &self.shimmer_particle,
+            _ => &self.green_particle,
         }
     }
 }
