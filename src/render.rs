@@ -1,11 +1,11 @@
 use ggez::{
     graphics::Font,
-    graphics::{self, DrawMode, DrawParam, Image, Scale},
+    graphics::{self, DrawMode, DrawParam, Scale},
     nalgebra::Point2,
     timer, Context, GameResult,
 };
 use graphics::Color;
-use std::{collections::HashMap, time::Duration};
+use std::time::Duration;
 
 use crate::{assets::Assets, particle::Particle};
 use crate::{

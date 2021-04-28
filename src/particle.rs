@@ -1,8 +1,6 @@
 use rand::distributions::{Distribution, Uniform};
 
-use crate::assets::Assets;
-
-#[derive(Eq, PartialEq, Hash, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub enum ParticleType {
     Green,
     Red,

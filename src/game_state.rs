@@ -3,8 +3,7 @@ use std::time::Duration;
 use crate::{assets::Assets, ball::Ball, paddle::Paddle, particle::Particle, pong::Wall};
 
 use ggez::{
-    audio,
-    graphics::{draw, drawable_size, Rect},
+    graphics::{drawable_size, Rect},
     Context, GameResult,
 };
 
