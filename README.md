@@ -12,7 +12,7 @@
   <img src="https://media.giphy.com/media/kuX2nL73MB77LgncDS/giphy.gif" width="624" height="351"></img>
   </a>
   <br />
-  <a align="center" href="https://raw.githubusercontent.com/mvsrgc/rust-pong/master/pong.webp">High quality video</a>
+  <a align="center" href="https://raw.githubusercontent.com/mvsrgc/rust-pong/master/pong.webp">High quality video (Slow on mobile)</a>
 
   <h3 align="center">Pong Game with Rust</h3>
 </p>
